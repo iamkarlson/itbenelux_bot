@@ -6,6 +6,7 @@ import re
 BOT_TOKEN = os.environ['bot_token']
 URL = "https://api.telegram.org/bot{}/".format(BOT_TOKEN)
 STIKER = os.environ['sticker']
+BATKO_STIKER = os.environ['batko_sticker']
 
 def join_handler(chat_id, reply_to):
     send_message("Игорь, ты ли это?", chat_id, reply_to)
@@ -34,6 +35,7 @@ def lambda_handler(event, context):
             chat_id = message['message']['chat']['id']
             reply_to = message['message']['message_id']
             join_handler(chat_id,reply_to)  
+            return { 'statusCode': 200 }
     except:
         pass
     
@@ -47,7 +49,7 @@ def lambda_handler(event, context):
             print("wrong message type")
             return
     try:
-        p = re.compile(r".*я .*ору.*", re.IGNORECASE)
+        p = re.compile(r".*(\bя\b|бля).*\bор(у|ну).*", re.IGNORECASE)
         message_text = (body_message['text']).lower()
         if p.match(message_text):
             print("chat message")
@@ -56,8 +58,16 @@ def lambda_handler(event, context):
     
             sticker_id = STIKER
             send_sticker(sticker_id, chat_id, reply_to)
+            return { 'statusCode': 200 }
+        bp = re.compile(r".*\bя белорус\b.*", re.IGNORECASE)
+        if bp.match(message_text):
+            print("chat message")
+            chat_id = body_message['chat']['id']
+            reply_to = body_message['message_id']
+    
+            sticker_id = BATKO_STIKER
+            send_sticker(sticker_id, chat_id, reply_to)
+            return { 'statusCode': 200 }
     except:
         pass
-    return {
-        'statusCode': 200
-    }
+    return { 'statusCode': 200 }
