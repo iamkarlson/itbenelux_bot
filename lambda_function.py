@@ -17,6 +17,7 @@ def send_message(text, chat_id,reply_to):
     if reply_to:
         payload['reply_to_message_id']=reply_to
     requests.post(url, json=payload)
+    
 def send_sticker(sticker_id, chat_id, reply_to):
     print("sending sticker %s %s %s"%(sticker_id, chat_id, reply_to))
     url = URL + "sendSticker"
@@ -49,7 +50,7 @@ def lambda_handler(event, context):
             print("wrong message type")
             return
     try:
-        p = re.compile(r".*(\bя\b|бля).*\bор(у|ну).*", re.IGNORECASE)
+        p = re.compile(r".*((\bя\b)|(\bбля\b)|([aа]{3,})).*\bор(у|ну)\b.*", re.IGNORECASE)
         message_text = (body_message['text']).lower()
         if p.match(message_text):
             print("chat message")
@@ -67,6 +68,14 @@ def lambda_handler(event, context):
     
             sticker_id = BATKO_STIKER
             send_sticker(sticker_id, chat_id, reply_to)
+            return { 'statusCode': 200 }
+        jp = re.compile(r".*\b(джав(к)?(ейк)?(еечк)?(а|е)|java)\b.*", re.IGNORECASE)
+        if jp.match(message_text):
+            print("chat message")
+            chat_id = body_message['chat']['id']
+            reply_to = body_message['message_id']
+    
+            send_message("так джава же говно", chat_id, reply_to)
             return { 'statusCode': 200 }
     except:
         pass
