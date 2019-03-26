@@ -69,7 +69,7 @@ def lambda_handler(event, context):
             sticker_id = BATKO_STIKER
             send_sticker(sticker_id, chat_id, reply_to)
             return { 'statusCode': 200 }
-        jp = re.compile(r".*\b(джав(к)?(ейк)?(еечк)?(а|е)|java)\b.*", re.IGNORECASE)
+        jp = re.compile(r".*\b(джав(к)?(ейк)?(еечк)?(а|е|ой)|java)\b.*", re.IGNORECASE)
         if jp.match(message_text):
             print("chat message")
             chat_id = body_message['chat']['id']
