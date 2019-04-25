@@ -2,11 +2,14 @@ import json
 from botocore.vendored import requests
 import os
 import re
+import random
 
 BOT_TOKEN = os.environ['bot_token']
 URL = "https://api.telegram.org/bot{}/".format(BOT_TOKEN)
 STIKER = os.environ['sticker']
 BATKO_STIKER = os.environ['batko_sticker']
+RAND_RATIO = int(os.environ['rand_ratio'])
+
 
 def join_handler(chat_id, reply_to):
     send_message("Игорь, ты ли это?", chat_id, reply_to)
@@ -69,14 +72,23 @@ def lambda_handler(event, context):
             sticker_id = BATKO_STIKER
             send_sticker(sticker_id, chat_id, reply_to)
             return { 'statusCode': 200 }
-        jp = re.compile(r".*\b(джав(к)?(ейк)?(еечк)?(а|е|ой)|java)\b.*", re.IGNORECASE)
+        jp = re.compile(r".*\b(джав(к)?(ейк)?(еечк)?(а|е|ой|у)|java)\b.*", re.IGNORECASE)
         if jp.match(message_text):
             print("chat message")
             chat_id = body_message['chat']['id']
             reply_to = body_message['message_id']
-    
-            send_message("так джава же говно", chat_id, reply_to)
+            print(RAND_RATIO)
+            rand = random.randint(1,100)
+            print(rand)
+            if rand < RAND_RATIO:
+                send_message("так джава же говно", chat_id, reply_to)
+            else:
+                print("java ololo is skipped")
+            
             return { 'statusCode': 200 }
-    except:
+    except Exception as e:
+        print("error")
+        print(e)
+        
         pass
     return { 'statusCode': 200 }
