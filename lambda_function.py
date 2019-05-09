@@ -104,6 +104,22 @@ def lambda_handler(event, context):
             url, text = hn_top.get_top()
             send_message("все идет по плану. новости вот читаю: [%s](%s)" % (
                 text, url), chat_id, reply_to)
+                
+        u_rg = re.compile(
+            r".*\b((убер(а|е|ом|у)?)|uber)\b.*", re.IGNORECASE)
+        if u_rg.match(message_text):
+            print("chat message")
+            chat_id = body_message['chat']['id']
+            reply_to = body_message['message_id']
+            print(RAND_RATIO)
+            rand = random.randint(1, 100)
+            print(rand)
+            if rand < RAND_RATIO:
+                send_message("Ехал убер через убер, видит убер в убер убер", chat_id, reply_to)
+            else:
+                print("uber ololo is skipped")
+
+            return {'statusCode': 200}
     except Exception as e:
         print("error")
         print(e)
