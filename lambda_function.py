@@ -104,7 +104,7 @@ def lambda_handler(event, context):
             url, text = hn_top.get_top()
             send_message("все идет по плану. новости вот читаю: [%s](%s)" % (
                 text, url), chat_id, reply_to)
-                
+
         u_rg = re.compile(
             r".*\b((убер(а|е|ом|у)?)|uber)\b.*", re.IGNORECASE)
         if u_rg.match(message_text):
@@ -119,6 +119,14 @@ def lambda_handler(event, context):
             else:
                 print("uber ololo is skipped")
 
+            return {'statusCode': 200}
+        print("debug")
+        p_rg = re.compile(r".*\bричард\b.*\bпочему\b.*\bты\b.*\bне\b.*", re.IGNORECASE)
+        if p_rg.match(message_text):
+            print("pochemu message")
+            chat_id = body_message['chat']['id']
+            reply_to = body_message['message_id']
+            send_message("я что, дурак?", chat_id, reply_to)
             return {'statusCode': 200}
     except Exception as e:
         print("error")
