@@ -58,8 +58,7 @@ def lambda_handler(event, context):
             print("wrong message type")
             return
     try:
-        
-        
+
         p = re.compile(
             r".*((\bя\b)|(\bбля\b)|([aа]{3,})).*\bор(у|ну)\b.*", re.IGNORECASE)
         message_text = (body_message['text']).lower()
@@ -71,9 +70,7 @@ def lambda_handler(event, context):
             sticker_id = STIKER
             send_sticker(sticker_id, chat_id, reply_to)
             return {'statusCode': 200}
-            
-            
-            
+
         bp = re.compile(r".*\bя белорус\b.*", re.IGNORECASE)
         if bp.match(message_text):
             print("chat message")
@@ -83,8 +80,7 @@ def lambda_handler(event, context):
             sticker_id = BATKO_STIKER
             send_sticker(sticker_id, chat_id, reply_to)
             return {'statusCode': 200}
-            
-            
+
         jp = re.compile(
             r".*\b(джав(к)?(ейк)?(еечк)?(а|е|ой|у)|java)\b.*", re.IGNORECASE)
         if jp.match(message_text):
@@ -102,7 +98,6 @@ def lambda_handler(event, context):
                 else:
                     print("java ololo is skipped")
 
-
         news_rg = re.compile(
             r"эй ричард, как там на передовой\?", re.IGNORECASE)
         if news_rg.match(message_text):
@@ -114,7 +109,6 @@ def lambda_handler(event, context):
                 text, url), chat_id, reply_to)
             return {'statusCode': 200}
 
-
         u_rg = re.compile(
             r".*\b((убер(а|е|ом|у)?)|uber)\b.*", re.IGNORECASE)
         if u_rg.match(message_text):
@@ -125,23 +119,24 @@ def lambda_handler(event, context):
             rand = random.randint(1, 100)
             print(rand)
             if rand < RAND_RATIO:
-                send_message("Ехал убер через убер, видит убер в убер убер", chat_id, reply_to)
+                send_message(
+                    "Ехал убер через убер, видит убер в убер убер", chat_id, reply_to)
                 return {'statusCode': 200}
             else:
                 print("uber ololo is skipped")
 
-            
         print("debug")
-        p_rg = re.compile(r".*\bричард\b.*\bпочему\b.*\bты\b.*\bне\b.*", re.IGNORECASE)
+        p_rg = re.compile(
+            r".*\bричард\b.*\bпочему\b.*\bты\b.*\bне\b.*", re.IGNORECASE)
         if p_rg.match(message_text):
             print("pochemu message")
             chat_id = body_message['chat']['id']
             reply_to = body_message['message_id']
             send_message("я что, дурак?", chat_id, reply_to)
             return {'statusCode': 200}
-            
+
     except Exception as e:
-        print("error")
+        print("error occurred")
         print(e)
 
         pass
