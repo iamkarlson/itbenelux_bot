@@ -14,7 +14,7 @@ RAND_RATIO = int(os.environ['rand_ratio'])
 
 
 def join_handler(chat_id, reply_to):
-    send_message("Игорь, ты ли это?", chat_id, reply_to)
+    send_message("Представься, мразь!", chat_id, reply_to)
 
 
 def send_message(text, chat_id, reply_to):
