@@ -58,14 +58,13 @@ def lambda_handler(event, context):
             print("wrong message type")
             return
     try:
-
+        chat_id = body_message['chat']['id']
+        reply_to = body_message['message_id']
         p = re.compile(
             r".*((\bя\b)|(\bбля\b)|([aа]{3,})).*\bор(у|ну)\b.*", re.IGNORECASE)
         message_text = (body_message['text']).lower()
         if p.match(message_text):
             print("chat message")
-            chat_id = body_message['chat']['id']
-            reply_to = body_message['message_id']
 
             sticker_id = STIKER
             send_sticker(sticker_id, chat_id, reply_to)
@@ -74,8 +73,6 @@ def lambda_handler(event, context):
         bp = re.compile(r".*\bя белорус\b.*", re.IGNORECASE)
         if bp.match(message_text):
             print("chat message")
-            chat_id = body_message['chat']['id']
-            reply_to = body_message['message_id']
 
             sticker_id = BATKO_STIKER
             send_sticker(sticker_id, chat_id, reply_to)
@@ -87,8 +84,6 @@ def lambda_handler(event, context):
             jp_check = re.compile("так джава же говно", re.IGNORECASE)
             if not jp_check.match(message_text):
                 print("chat message")
-                chat_id = body_message['chat']['id']
-                reply_to = body_message['message_id']
                 print(RAND_RATIO)
                 rand = random.randint(1, 100)
                 print(rand)
@@ -102,42 +97,39 @@ def lambda_handler(event, context):
             r"эй ричард, как там на передовой\?", re.IGNORECASE)
         if news_rg.match(message_text):
             print("news message")
-            chat_id = body_message['chat']['id']
-            reply_to = body_message['message_id']
             url, text = hn_top.get_top()
             send_message("все идет по плану. новости вот читаю: [%s](%s)" % (
                 text, url), chat_id, reply_to)
             return {'statusCode': 200}
-
-        u_rg = re.compile(
-            r".*\b((убер(а|е|ом|у)?)|uber)\b.*", re.IGNORECASE)
-        if u_rg.match(message_text):
-            print("chat message")
-            chat_id = body_message['chat']['id']
-            reply_to = body_message['message_id']
-            print(RAND_RATIO)
-            rand = random.randint(1, 100)
-            print(rand)
-            if rand < RAND_RATIO:
-                send_message(
-                    "Ехал убер через убер, видит убер в убер убер", chat_id, reply_to)
-                return {'statusCode': 200}
-            else:
-                print("uber ololo is skipped")
-
-        print("debug")
-        p_rg = re.compile(
-            r".*\bричард\b.*\bпочему\b.*\bты\b.*\bне\b.*", re.IGNORECASE)
-        if p_rg.match(message_text):
-            print("pochemu message")
-            chat_id = body_message['chat']['id']
-            reply_to = body_message['message_id']
-            send_message("я что, дурак?", chat_id, reply_to)
-            return {'statusCode': 200}
-
+            
+            
+        print("uber")
+        uber_answer = check(message_text,r".*\b((убер(а|е|ом|у)?)|uber)\b.*", "Ехал убер через убер, видит убер в убер убер", chat_id, reply_to, RAND_RATIO)
+        if(uber_answer['statusCode']>0):
+            return uber_answer
+        print("durak")
+        durak_answer = check(message_text,r".*\bричард\b.*\bпочему\b.*\bты\b.*\bне\b.*", "я что, дурак?", chat_id,reply_to, 101)
+        if(durak_answer['statusCode']>0):
+            return durak_answer
+            
+        print("rubi")
+        rubi_answer = check(message_text,r".*\bруби\b.*", "руби мёртв", chat_id,reply_to, RAND_RATIO)
+        if(rubi_answer['statusCode']>0):
+            return rubi_answer
     except Exception as e:
         print("error occurred")
         print(e)
-
         pass
     return {'statusCode': 200}
+
+def check(message, regexp, answer, chat_id, reply_to, ratio):
+        p_rg = re.compile(regexp, re.IGNORECASE)
+        if p_rg.match(message):
+            rand = random.randint(1, 100)
+            if rand < ratio:
+                send_message(answer, chat_id, reply_to)
+                return {'statusCode': 200}
+            else:
+                print("ololo is skipped")
+                return {'statusCode': 200}
+        return {'statusCode':0}
