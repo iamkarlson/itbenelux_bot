@@ -12,10 +12,8 @@ STIKER = os.environ['sticker']
 BATKO_STIKER = os.environ['batko_sticker']
 RAND_RATIO = int(os.environ['rand_ratio'])
 
-
 def join_handler(chat_id, reply_to):
-    send_message("Игорь, ты ли это?", chat_id, reply_to)
-
+    send_message("Игорь, ты ли это? Чем дышишь, под кем кодишь?", chat_id, reply_to)
 
 def send_message(text, chat_id, reply_to):
     url = URL + "sendMessage"
@@ -23,7 +21,6 @@ def send_message(text, chat_id, reply_to):
     if reply_to:
         payload['reply_to_message_id'] = reply_to
     requests.post(url, json=payload)
-
 
 def send_sticker(sticker_id, chat_id, reply_to):
     print("sending sticker %s %s %s" % (sticker_id, chat_id, reply_to))
@@ -33,7 +30,6 @@ def send_sticker(sticker_id, chat_id, reply_to):
         payload['reply_to_message_id'] = reply_to
     r = requests.post(url, json=payload)
     print(r.json())
-
 
 def lambda_handler(event, context):
     message = json.loads(event['body'])
@@ -101,21 +97,28 @@ def lambda_handler(event, context):
             send_message("все идет по плану. новости вот читаю: [%s](%s)" % (
                 text, url), chat_id, reply_to)
             return {'statusCode': 200}
-            
-            
+
         print("uber")
         uber_answer = check(message_text,r".*\b((убер(а|е|ом|у)?)|uber)\b.*", "Ехал убер через убер, видит убер в убер убер", chat_id, reply_to, RAND_RATIO)
         if(uber_answer['statusCode']>0):
             return uber_answer
+
         print("durak")
         durak_answer = check(message_text,r".*\bричард\b.*\bпочему\b.*\bты\b.*\bне\b.*", "я что, дурак?", chat_id,reply_to, 101)
         if(durak_answer['statusCode']>0):
             return durak_answer
-            
+
         print("rubi")
-        rubi_answer = check(message_text,r".*\bруби\b.*", "руби мёртв", chat_id,reply_to, RAND_RATIO)
+        rubi_answer = check(message_text,r".*\bруби\b.*", "руби мёртв", chat_id, reply_to, RAND_RATIO)
         if(rubi_answer['statusCode']>0):
             return rubi_answer
+
+        print("python")
+        python_answer = check(message_text,r".*\bпитон|петон|python\b.*",
+                              "петон медленный", chat_id, reply_to, RAND_RATIO)
+        if(python_answer['statusCode']>0):
+            return python_answer
+
     except Exception as e:
         print("error occurred")
         print(e)
