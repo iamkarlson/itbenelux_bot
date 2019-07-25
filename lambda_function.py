@@ -113,7 +113,7 @@ def lambda_handler(event, context):
             return durak_answer
             
         print("rubi")
-        rubi_answer = check(message_text,r".*\bруби\b.*", "руби мёртв", chat_id,reply_to, RAND_RATIO)
+        rubi_answer = check(message_text,r".*\b(руби|ruby)\b.*", "руби мёртв", chat_id,reply_to, RAND_RATIO*2)
         if(rubi_answer['statusCode']>0):
             return rubi_answer
     except Exception as e:
