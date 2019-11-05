@@ -108,7 +108,7 @@ def lambda_handler(event, context):
         if(uber_answer['statusCode']>0):
             return uber_answer
         print("durak")
-        durak_answer = check(message_text,r".*\bричард\b.*\bпочему\b.*\bты\b.*\bне\b.*", "я что, дурак?", chat_id,reply_to, 101)
+        durak_answer = check(message_text,r".*\bричард\b.*\bпочему\b.*\bты\b.*\bне\b.*", "я что, дурак?", chat_id, reply_to, 101)
         if(durak_answer['statusCode']>0):
             return durak_answer
             
@@ -116,6 +116,11 @@ def lambda_handler(event, context):
         rubi_answer = check(message_text,r".*\b(руби|ruby)\b.*", "руби мёртв", chat_id,reply_to, RAND_RATIO*2)
         if(rubi_answer['statusCode']>0):
             return rubi_answer
+            
+        print("setevik")
+        setevik_answer = check(message_text,r".*\b(сетевик)\b.*", "сетевик хуже фронтендера", chat_id,reply_to, RAND_RATIO*2)
+        if(setevik_answer['statusCode']>0):
+            return setevik_answer
     except Exception as e:
         print("error occurred")
         print(e)
