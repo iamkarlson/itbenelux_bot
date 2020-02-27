@@ -3,6 +3,7 @@ from botocore.vendored import requests
 import os
 import re
 import random
+from collections import namedtuple
 
 import hn_top
 
@@ -13,8 +14,34 @@ BATKO_STIKER = os.environ["batko_sticker"]
 RAND_RATIO = int(os.environ["rand_ratio"])
 
 
+class User(namedtuple("User", "id, is_bot, first_name, last_name")):
+    # __slots__ = ()
+
+    @property
+    def full_name(self):
+        if self.first_name and self.last_name:
+            return "%s %s" % (self.first_name, self.last_name)
+        elif self.first_name or self.last_name:
+            return self.first_name or self.last_name
+        else:
+            return self.id
+
+    def __str__(self):
+        return self.full_name
+
+    @staticmethod
+    def from_dict(d):
+        if d is None or ["id", "is_bot", "first_name"] > list(d.keys()):
+            return None
+        return User(int(d.get("id", 0)), bool(d.get("is_bot", True)), d.get("first_name"), d.get("last_name"))
+
+
 def join_handler(chat_id, reply_to):
     send_message("Игорь, ты ли это?", chat_id, reply_to)
+
+
+def invite_handler(new_joiner, inviter, chat_id):
+    send_message('Заходит %s в чат, и говорит "Я от %s", а шляпа ему как раз.' % (new_joiner, inviter), chat_id, None)
 
 
 def send_message(text, chat_id, reply_to):
@@ -22,6 +49,7 @@ def send_message(text, chat_id, reply_to):
     payload = {"chat_id": chat_id, "text": text, "parse_mode": "markdown"}
     if reply_to:
         payload["reply_to_message_id"] = reply_to
+    print(payload)
     requests.post(url, json=payload)
 
 
@@ -36,24 +64,33 @@ def send_sticker(sticker_id, chat_id, reply_to):
 
 
 def lambda_handler(event, context):
-    message = json.loads(event["body"])
-    print(message)
+    body = json.loads(event["body"])
+    print(body)
     try:
-        if message["message"]["new_chat_participant"]["id"]:
-            print("new member")
-            chat_id = message["message"]["chat"]["id"]
-            reply_to = message["message"]["message_id"]
+        msg = body["message"]
+        inviter = User.from_dict(msg.get("from"))
+        new_joiner = User.from_dict(msg.get("new_chat_participant"))
+        chat_id = msg["chat"]["id"]
+
+        if new_joiner and inviter:
+            print("%s invited %s to %d" % (inviter, new_joiner, chat_id))
+            invite_handler(new_joiner, inviter, chat_id)
+            return {"statusCode": 200}
+        elif new_joiner:
+            print("%s joined to %d" % (new_joiner, chat_id))
+            reply_to = body["message"]["message_id"]
             join_handler(chat_id, reply_to)
             return {"statusCode": 200}
-    except:
-        pass
+
+    except Exception as e:
+        print(e)
 
     try:
-        body_message = message["message"]
+        body_message = body["message"]
     except:
         try:
             print("edited message")
-            body_message = message["edited_message"]
+            body_message = body["edited_message"]
         except:
             print("wrong message type")
             return
