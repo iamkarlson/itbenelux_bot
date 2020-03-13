@@ -41,7 +41,9 @@ def join_handler(chat_id, reply_to):
 
 
 def invite_handler(new_joiner, inviter, chat_id):
-    send_message('Заходит %s в чат, и говорит "Я от %s", а шляпа ему как раз.' % (new_joiner, inviter), chat_id, None)
+    print(new_joiner)
+    send_message('Что, [%s](tg://user?id=%s), дружка своего проприетарного привел? [%s](tg://user?id=%s), что скажешь в свое оправдание?' %
+                 (inviter.full_name, inviter.id, new_joiner.full_name, new_joiner.id), chat_id, None)
 
 
 def send_message(text, chat_id, reply_to):
@@ -64,13 +66,15 @@ def send_sticker(sticker_id, chat_id, reply_to):
 
 
 def lambda_handler(event, context):
+    print(event)
     body = json.loads(event["body"])
-    print(body)
     try:
         msg = body["message"]
         inviter = User.from_dict(msg.get("from"))
         new_joiner = User.from_dict(msg.get("new_chat_participant"))
         chat_id = msg["chat"]["id"]
+        # new_joiner = {id: new_joiner_id, name: new_joiner_name}
+        # inviter = {id: inviter_id, name: inviter_name}
 
         if new_joiner and inviter:
             print("%s invited %s to %d" % (inviter, new_joiner, chat_id))
@@ -97,7 +101,8 @@ def lambda_handler(event, context):
     try:
         chat_id = body_message["chat"]["id"]
         reply_to = body_message["message_id"]
-        p = re.compile(r".*((\bя\b)|(\bбля\b)|([aа]{3,})).*\bор(у|ну)\b.*", re.IGNORECASE)
+        p = re.compile(
+            r".*((\bя\b)|(\bбля\b)|([aа]{3,})).*\bор(у|ну)\b.*", re.IGNORECASE)
         message_text = (body_message["text"]).lower()
         if p.match(message_text):
             print("chat message")
@@ -114,7 +119,8 @@ def lambda_handler(event, context):
             send_sticker(sticker_id, chat_id, reply_to)
             return {"statusCode": 200}
 
-        jp = re.compile(r".*\b(джав(к)?(ейк)?(еечк)?(а|е|ой|у)|java)\b.*", re.IGNORECASE)
+        jp = re.compile(
+            r".*\b(джав(к)?(ейк)?(еечк)?(а|е|ой|у)|java)\b.*", re.IGNORECASE)
         if jp.match(message_text):
             jp_check = re.compile("так джава же говно", re.IGNORECASE)
             if not jp_check.match(message_text):
@@ -128,11 +134,13 @@ def lambda_handler(event, context):
                 else:
                     print("java ololo is skipped")
 
-        news_rg = re.compile(r"эй ричард, как там на передовой\?", re.IGNORECASE)
+        news_rg = re.compile(
+            r"эй ричард, как там на передовой\?", re.IGNORECASE)
         if news_rg.match(message_text):
             print("news message")
             url, text = hn_top.get_top()
-            send_message("все идет по плану. новости вот читаю: [%s](%s)" % (text, url), chat_id, reply_to)
+            send_message("все идет по плану. новости вот читаю: [%s](%s)" % (
+                text, url), chat_id, reply_to)
             return {"statusCode": 200}
 
         print("uber")
@@ -154,7 +162,8 @@ def lambda_handler(event, context):
             return durak_answer
 
         print("rubi")
-        rubi_answer = check(message_text, r".*\b(руби|ruby)\b.*", "руби мёртв", chat_id, reply_to, RAND_RATIO * 2)
+        rubi_answer = check(message_text, r".*\b(руби|ruby)\b.*",
+                            "руби мёртв", chat_id, reply_to, RAND_RATIO * 2)
         if rubi_answer["statusCode"] > 0:
             return rubi_answer
 
