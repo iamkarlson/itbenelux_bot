@@ -147,7 +147,7 @@ def lambda_handler(event, context):
         uber_answer = check(
             message_text,
             r".*\b((убер(а|е|ом|у)?)|uber)\b.*",
-            "Ехал убер через убер, видит убер в убер убер",
+            "так убер же всех разогнал",
             chat_id,
             reply_to,
             RAND_RATIO,
