@@ -75,8 +75,8 @@ def lambda_handler(event, context):
         chat_id = msg["chat"]["id"]
         # new_joiner = {id: new_joiner_id, name: new_joiner_name}
         # inviter = {id: inviter_id, name: inviter_name}
-
-        if new_joiner and inviter:
+        print(inviter.id)
+        if new_joiner.id != inviter.id:
             print("%s invited %s to %d" % (inviter, new_joiner, chat_id))
             invite_handler(new_joiner, inviter, chat_id)
             return {"statusCode": 200}
@@ -147,7 +147,7 @@ def lambda_handler(event, context):
         uber_answer = check(
             message_text,
             r".*\b((убер(а|е|ом|у)?)|uber)\b.*",
-            "Ехал убер через убер, видит убер в убер убер",
+            "так убер же всех разогнал",
             chat_id,
             reply_to,
             RAND_RATIO,
@@ -173,6 +173,14 @@ def lambda_handler(event, context):
         )
         if setevik_answer["statusCode"] > 0:
             return setevik_answer
+        
+        
+        print("aliexpress_answer")
+        aliexpress_answer = check(
+            message_text, r".*\b(али|алиекспресс?[А-я]?|алиэкспресс?[А-я]?|aliexpress|bangood)\b.*", "НЕ ПОКУПАЙ У КИТАЙЦЕВ ПОДУМОЙ", chat_id, reply_to, 101
+        )
+        if aliexpress_answer["statusCode"] > 0:
+            return aliexpress_answer
     except Exception as e:
         print("error occurred")
         print(e)
