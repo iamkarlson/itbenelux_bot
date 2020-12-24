@@ -173,20 +173,20 @@ def lambda_handler(event, context):
         )
         if setevik_answer["statusCode"] > 0:
             return setevik_answer
-        
+
         print("pizda")
         pizda_answer = check(
             message_text, r"да[.!\)]?$", "фрибэсда", chat_id, reply_to, RAND_RATIO * 3
         )
         if pizda_answer["statusCode"] > 0:
             return pizda_answer
-            
+
         pizda_answer1 = check(
             message_text, r"нет[.!\)]?$", "эникейщика ответ", chat_id, reply_to, RAND_RATIO * 3
         )
         if pizda_answer1["statusCode"] > 0:
             return pizda_answer1
-        
+
         print("aliexpress_answer")
         aliexpress_answer = check(
             message_text, r".*\b(али|алиекспресс?[А-я]?|алиэкспресс?[А-я]?|aliexpress|bangood)\b.*", "НЕ ПОКУПАЙ У КИТАЙЦЕВ ПОДУМОЙ", chat_id, reply_to, 101
