@@ -177,7 +177,7 @@ def lambda_handler(event, context):
         print("amen")
                 
         amen_answer = check(
-            message_text, r".*\b(бегемотство)\b.*", "аминь", chat_id, reply_to, RAND_RATIO * 3
+            message_text, r".*\b(бегемо(тс|ц)тво)\b.*", "аминь", chat_id, reply_to, RAND_RATIO * 3
         )
         if amen_answer["statusCode"] > 0:
             return amen_answer
