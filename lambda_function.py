@@ -36,10 +36,6 @@ class User(namedtuple("User", "id, is_bot, first_name, last_name")):
         return User(int(d.get("id", 0)), bool(d.get("is_bot", True)), d.get("first_name"), d.get("last_name"))
 
 
-def join_handler(chat_id, reply_to):
-    send_message("Игорь, ты ли это?", chat_id, reply_to)
-
-
 def invite_handler(new_joiner, inviter, chat_id):
     print(new_joiner)
     send_message('Что, [%s](tg://user?id=%s), дружка своего проприетарного привел? [%s](tg://user?id=%s), что скажешь в свое оправдание?' %
