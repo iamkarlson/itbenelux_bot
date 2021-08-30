@@ -37,7 +37,11 @@ class User(namedtuple("User", "id, is_bot, first_name, last_name")):
 
 
 def join_handler(chat_id, reply_to):
-    send_message("Игорь, ты ли это?", chat_id, reply_to)
+    rand = random.randint(1, 100)
+    if rand %2 == 1:
+        send_message("Игорь, ты ли это?", chat_id, reply_to)
+    else:
+        send_message("Жора, где ты был?", chat_id, reply_to)
 
 
 def invite_handler(new_joiner, inviter, chat_id):
