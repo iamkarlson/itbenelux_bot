@@ -38,10 +38,13 @@ class User(namedtuple("User", "id, is_bot, first_name, last_name")):
 
 def join_handler(chat_id, reply_to):
     rand = random.randint(1, 100)
-    if rand %2 == 1:
-        send_message("Игорь, ты ли это?", chat_id, reply_to)
-    else:
-        send_message("Жора, где ты был?", chat_id, reply_to)
+    choices = ["Игорь, ты ли это?",
+        "Жора, где ты был?",
+        "Кем вы видите себя через 5 лет?",
+        "Почему вы выбрали именно эту профессию?",
+        "Чем абстрактный класс отличается от интерфейса?"]
+    choice = random.choice(choices)
+    send_message(choice, chat_id, reply_to)
 
 
 def invite_handler(new_joiner, inviter, chat_id):
@@ -181,10 +184,18 @@ def lambda_handler(event, context):
         print("amen")
                 
         amen_answer = check(
-            message_text, r".*\b(бегемотство)\b.*", "аминь", chat_id, reply_to, RAND_RATIO * 3
+            message_text, r".*\b(б[еи]гемот?с?т?в[оаие]|б[еи]гемотт?[оаие]|б[еи]гемос?тв[оаие])\b.*", "аминь", chat_id, reply_to, RAND_RATIO * 3
         )
         if amen_answer["statusCode"] > 0:
             return amen_answer
+            
+        print("a-men")
+                
+        amen1_answer = check(
+            message_text, r".*\b(б-мот|б-мотств[оаие]|б-мотт[оаие])\b.*", "ам-инь", chat_id, reply_to, RAND_RATIO * 3
+        )
+        if amen1_answer["statusCode"] > 0:
+            return amen1_answer
         
         print("pizda")
         pizda_answer = check(
