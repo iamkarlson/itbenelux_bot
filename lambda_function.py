@@ -216,6 +216,13 @@ def lambda_handler(event, context):
         )
         if aliexpress_answer["statusCode"] > 0:
             return aliexpress_answer
+
+        print("moneyz")        
+        moneyz_answer = check(
+            message_text, r"эй ричард, мне мало платят", "а я видел [тут](https://www.levels.fyi/Salaries/Software-Engineer/Netherlands/) плотют много! обманывают наверное!", chat_id, reply_to, 101
+        )
+        if moneyz_answer["statusCode"] > 0:
+            return moneyz_answer
     except Exception as e:
         print("error occurred")
         print(e)
