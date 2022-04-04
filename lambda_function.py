@@ -10,7 +10,6 @@ import hn_top
 BOT_TOKEN = os.environ["bot_token"]
 URL = "https://api.telegram.org/bot{}/".format(BOT_TOKEN)
 STIKER = os.environ["sticker"]
-BATKO_STIKER = os.environ["batko_sticker"]
 RAND_RATIO = int(os.environ["rand_ratio"])
 
 
@@ -42,7 +41,9 @@ def join_handler(chat_id, reply_to):
         "Жора, где ты был?",
         "Кем вы видите себя через 5 лет?",
         "Почему вы выбрали именно эту профессию?",
-        "Чем абстрактный класс отличается от интерфейса?"]
+        "Чем абстрактный класс отличается от интерфейса?",
+        "Вы используете стримы?",
+        "Ты то хоть 350к зарабатываешь?"]
     choice = random.choice(choices)
     send_message(choice, chat_id, reply_to)
 
@@ -118,13 +119,6 @@ def lambda_handler(event, context):
             send_sticker(sticker_id, chat_id, reply_to)
             return {"statusCode": 200}
 
-        bp = re.compile(r".*\bя белорус\b.*", re.IGNORECASE)
-        if bp.match(message_text):
-            print("chat message")
-
-            sticker_id = BATKO_STIKER
-            send_sticker(sticker_id, chat_id, reply_to)
-            return {"statusCode": 200}
 
         jp = re.compile(
             r".*\b(джав(к)?(ейк)?(еечк)?(а|е|ой|у)|java)\b.*", re.IGNORECASE)
@@ -216,7 +210,7 @@ def lambda_handler(event, context):
         )
         if aliexpress_answer["statusCode"] > 0:
             return aliexpress_answer
-
+        
         print("moneyz")        
         moneyz_answer = check(
             message_text, r"эй ричард, мне мало платят", "а я видел [тут](https://www.levels.fyi/Salaries/Software-Engineer/Netherlands/) плотют много! обманывают наверное!", chat_id, reply_to, 101
