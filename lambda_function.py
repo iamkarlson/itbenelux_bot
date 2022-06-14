@@ -218,6 +218,14 @@ def lambda_handler(event, context):
         )
         if moneyz_answer["statusCode"] > 0:
             return moneyz_answer
+
+        print("tier")
+        tier_answer = check(
+            message_text, r".*\b[чЧ]то.*\b(такое|за)\b.*\b(тир|tir|tier)[123]?\??\b.*", "В конце-концов это [про деньги](https://blog.pragmaticengineer.com/software-engineering-salaries-in-the-netherlands-and-europe/)", chat_id, reply_to, 101
+        )
+        if tier_answer["statusCode"] > 0:
+            return tier_answer
+
     except Exception as e:
         print("error occurred")
         print(e)
