@@ -43,7 +43,7 @@ def join_handler(chat_id, reply_to):
         "Почему вы выбрали именно эту профессию?",
         "Чем абстрактный класс отличается от интерфейса?",
         "Вы используете стримы?",
-        "Ты то хоть 350к зарабатываешь?", 
+        "Ты-то хоть 350к зарабатываешь?",
         "Как наш чат поможет добиться вам ваших целей в жизни?"]
     choice = random.choice(choices)
     send_message(choice, chat_id, reply_to)
@@ -175,44 +175,44 @@ def lambda_handler(event, context):
         )
         if setevik_answer["statusCode"] > 0:
             return setevik_answer
-        
+
         print("amen")
-                
+
         amen_answer = check(
             message_text, r".*\b(б[еи]гемот?с?т?в[оаие]|б[еи]гемотт?[оаие]|б[еи]гемос?тв[оаие])\b.*", "аминь", chat_id, reply_to, RAND_RATIO * 3
         )
         if amen_answer["statusCode"] > 0:
             return amen_answer
-            
+
         print("a-men")
-                
+
         amen1_answer = check(
             message_text, r".*\b(б-мот|б-мотств[оаие]|б-мотт[оаие])\b.*", "ам-инь", chat_id, reply_to, RAND_RATIO * 3
         )
         if amen1_answer["statusCode"] > 0:
             return amen1_answer
-        
+
         print("pizda")
         pizda_answer = check(
             message_text, r"да[.!\)]?$", "фрибэсда", chat_id, reply_to, RAND_RATIO * 3
         )
         if pizda_answer["statusCode"] > 0:
             return pizda_answer
-            
+
         pizda_answer1 = check(
             message_text, r"нет[.!\)]?$", "эникейщика ответ", chat_id, reply_to, RAND_RATIO * 3
         )
         if pizda_answer1["statusCode"] > 0:
             return pizda_answer1
-        
+
         print("aliexpress_answer")
         aliexpress_answer = check(
             message_text, r".*\b(али|алиекспресс?[А-я]?|алиэкспресс?[А-я]?|aliexpress|bangood)\b.*", "НЕ ПОКУПАЙ У КИТАЙЦЕВ ПОДУМОЙ", chat_id, reply_to, 101
         )
         if aliexpress_answer["statusCode"] > 0:
             return aliexpress_answer
-        
-        print("moneyz")        
+
+        print("moneyz")
         moneyz_answer = check(
             message_text, r"эй ричард, мне мало платят", "а я видел [тут](https://www.levels.fyi/Salaries/Software-Engineer/Netherlands/) плотют много! обманывают наверное!", chat_id, reply_to, 101
         )
