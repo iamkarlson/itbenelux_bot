@@ -1,0 +1,22 @@
+{
+  "update_id": 222222222,
+  "message": {
+    "text": "Some test text",
+    "message_id": 311,
+    "chat": {
+      "type": "private",
+      "username": "IamKarlson",
+      "first_name": "ᛃᛟᚺᚾ ᚠᚨcᛖᛚᛖᛊᛊ ᛞᛟᛖ",
+      "id": 333333333
+    },
+    "from": {
+      "is_premium": true,
+      "is_bot": false,
+      "id": 111111111,
+      "username": "IamKarlson",
+      "language_code": "en",
+      "first_name": "ᛃᛟᚺᚾ ᚠᚨcᛖᛚᛖᛊᛊ ᛞᛟᛖ"
+    },
+    "date": 1695023826
+  }
+}

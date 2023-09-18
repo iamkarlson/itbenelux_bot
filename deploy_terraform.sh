@@ -1,13 +1,5 @@
 #!/usr/bin/env zsh
 
-eval $(yq -r 'to_entries[] | "export \(.key)=\(.value)"' prod.env.yaml)
-
-# Copying requirements to sources as GCP wants it
-
-cp requirements.txt src/
-
-echo "Deploying terraform to $TF_VAR_project in $TF_VAR_region, name: $TF_VAR_name"
-
 terraform init
 
 terraform apply -auto-approve

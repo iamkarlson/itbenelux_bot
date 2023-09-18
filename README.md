@@ -1,13 +1,14 @@
 # Richard Stallman Bot
 
-Bot for chat "IT talks Benelux". Functions:
+Bot for chat "IT talks Benelux"
 
-* Warm welcome messages
-* Support participants when they are in difficult life situations
+# Why
 
+Because I can.
 
 # Init
-If you want to host the same one, you need to do create a new bot and deploy it to GCP. First, create a GCP project. `create_infra.sh` will do it for you. You still need to enable billing for this account. Open this link https://console.cloud.google.com/billing/linkedaccount?project=itbenelux-bot and click "Link a billing account". You can use your existing billing account or create a new one.
+
+Create a GCP project. `create_infra.sh` will do it for you. You still need to enable billing for this account. Open this link https://console.cloud.google.com/billing/linkedaccount?project=itbenelux-bot and click "Link a billing account". You can use your existing billing account or create a new one.
 
 
 # Deploy with terraform

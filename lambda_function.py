@@ -9,7 +9,7 @@ import hn_top
 
 BOT_TOKEN = os.environ["bot_token"]
 URL = "https://api.telegram.org/bot{}/".format(BOT_TOKEN)
-STIKER = os.environ["sticker"]
+OREVO_STICKER = os.environ["sticker"]
 RAND_RATIO = int(os.environ["rand_ratio"])
 
 
@@ -32,27 +32,37 @@ class User(namedtuple("User", "id, is_bot, first_name, last_name")):
     def from_dict(d):
         if d is None or ["id", "is_bot", "first_name"] > list(d.keys()):
             return None
-        return User(int(d.get("id", 0)), bool(d.get("is_bot", True)), d.get("first_name"), d.get("last_name"))
+        return User(
+            int(d.get("id", 0)),
+            bool(d.get("is_bot", True)),
+            d.get("first_name"),
+            d.get("last_name"),
+        )
 
 
 def join_handler(chat_id, reply_to):
-    rand = random.randint(1, 100)
-    choices = ["Игорь, ты ли это?",
+    choices = [
+        "Игорь, ты ли это?",
         "Жора, где ты был?",
         "Кем вы видите себя через 5 лет?",
         "Почему вы выбрали именно эту профессию?",
         "Чем абстрактный класс отличается от интерфейса?",
         "Вы используете стримы?",
-        "Ты то хоть 350к зарабатываешь?", 
-        "Как наш чат поможет добиться вам ваших целей в жизни?"]
+        "Ты то хоть 350к зарабатываешь?",
+        "Как наш чат поможет добиться вам ваших целей в жизни?",
+    ]
     choice = random.choice(choices)
     send_message(choice, chat_id, reply_to)
 
 
 def invite_handler(new_joiner, inviter, chat_id):
     print(new_joiner)
-    send_message('Что, [%s](tg://user?id=%s), дружка своего проприетарного привел? [%s](tg://user?id=%s), что скажешь в свое оправдание?' %
-                 (inviter.full_name, inviter.id, new_joiner.full_name, new_joiner.id), chat_id, None)
+    send_message(
+        "Что, [%s](tg://user?id=%s), дружка своего проприетарного привел? [%s](tg://user?id=%s), что скажешь в свое оправдание?"
+        % (inviter.full_name, inviter.id, new_joiner.full_name, new_joiner.id),
+        chat_id,
+        None,
+    )
 
 
 def send_message(text, chat_id, reply_to):
@@ -111,18 +121,19 @@ def lambda_handler(event, context):
         chat_id = body_message["chat"]["id"]
         reply_to = body_message["message_id"]
         p = re.compile(
-            r".*((\bя\b)|(\bбля\b)|([aа]{3,})).*\bор(у|ну)\b.*", re.IGNORECASE)
+            r".*((\bя\b)|(\bбля\b)|([aа]{3,})).*\bор(у|ну)\b.*", re.IGNORECASE
+        )
         message_text = (body_message["text"]).lower()
         if p.match(message_text):
             print("chat message")
 
-            sticker_id = STIKER
+            sticker_id = OREVO_STICKER
             send_sticker(sticker_id, chat_id, reply_to)
             return {"statusCode": 200}
 
-
         jp = re.compile(
-            r".*\b(джав(к)?(ейк)?(еечк)?(а|е|ой|у)|java)\b.*", re.IGNORECASE)
+            r".*\b(джав(к)?(ейк)?(еечк)?(а|е|ой|у)|java)\b.*", re.IGNORECASE
+        )
         if jp.match(message_text):
             jp_check = re.compile("так джава же говно", re.IGNORECASE)
             if not jp_check.match(message_text):
@@ -136,13 +147,15 @@ def lambda_handler(event, context):
                 else:
                     print("java ololo is skipped")
 
-        news_rg = re.compile(
-            r"эй ричард, как там на передовой\?", re.IGNORECASE)
+        news_rg = re.compile(r"эй ричард, как там на передовой\?", re.IGNORECASE)
         if news_rg.match(message_text):
             print("news message")
             url, text = hn_top.get_top()
-            send_message("все идет по плану. новости вот читаю: [%s](%s)" % (
-                text, url), chat_id, reply_to)
+            send_message(
+                "все идет по плану. новости вот читаю: [%s](%s)" % (text, url),
+                chat_id,
+                reply_to,
+            )
             return {"statusCode": 200}
 
         print("uber")
@@ -158,70 +171,116 @@ def lambda_handler(event, context):
             return uber_answer
         print("durak")
         durak_answer = check(
-            message_text, r".*\bричард\b.*\bпочему\b.*\bты\b.*\bне\b.*", "я что, дурак?", chat_id, reply_to, 101
+            message_text,
+            r".*\bричард\b.*\bпочему\b.*\bты\b.*\bне\b.*",
+            "я что, дурак?",
+            chat_id,
+            reply_to,
+            101,
         )
         if durak_answer["statusCode"] > 0:
             return durak_answer
 
         print("rubi")
-        rubi_answer = check(message_text, r".*\b(руби|ruby)\b.*",
-                            "руби мёртв", chat_id, reply_to, RAND_RATIO * 2)
+        rubi_answer = check(
+            message_text,
+            r".*\b(руби|ruby)\b.*",
+            "руби мёртв",
+            chat_id,
+            reply_to,
+            RAND_RATIO * 2,
+        )
         if rubi_answer["statusCode"] > 0:
             return rubi_answer
 
         print("setevik")
         setevik_answer = check(
-            message_text, r".*\b(сетевик)\b.*", "сетевик хуже фронтендера", chat_id, reply_to, RAND_RATIO * 2
+            message_text,
+            r".*\b(сетевик)\b.*",
+            "сетевик хуже фронтендера",
+            chat_id,
+            reply_to,
+            RAND_RATIO * 2,
         )
         if setevik_answer["statusCode"] > 0:
             return setevik_answer
-        
+
         print("amen")
-                
+
         amen_answer = check(
-            message_text, r".*\b(б[еи]гемот?с?т?в[оаие]|б[еи]гемотт?[оаие]|б[еи]гемос?тв[оаие])\b.*", "аминь", chat_id, reply_to, RAND_RATIO * 3
+            message_text,
+            r".*\b(б[еи]гемот?с?т?в[оаие]|б[еи]гемотт?[оаие]|б[еи]гемос?тв[оаие])\b.*",
+            "аминь",
+            chat_id,
+            reply_to,
+            RAND_RATIO * 3,
         )
         if amen_answer["statusCode"] > 0:
             return amen_answer
-            
+
         print("a-men")
-                
+
         amen1_answer = check(
-            message_text, r".*\b(б-мот|б-мотств[оаие]|б-мотт[оаие])\b.*", "ам-инь", chat_id, reply_to, RAND_RATIO * 3
+            message_text,
+            r".*\b(б-мот|б-мотств[оаие]|б-мотт[оаие])\b.*",
+            "ам-инь",
+            chat_id,
+            reply_to,
+            RAND_RATIO * 3,
         )
         if amen1_answer["statusCode"] > 0:
             return amen1_answer
-        
+
         print("pizda")
         pizda_answer = check(
             message_text, r"да[.!\)]?$", "фрибэсда", chat_id, reply_to, RAND_RATIO * 3
         )
         if pizda_answer["statusCode"] > 0:
             return pizda_answer
-            
+
         pizda_answer1 = check(
-            message_text, r"нет[.!\)]?$", "эникейщика ответ", chat_id, reply_to, RAND_RATIO * 3
+            message_text,
+            r"нет[.!\)]?$",
+            "эникейщика ответ",
+            chat_id,
+            reply_to,
+            RAND_RATIO * 3,
         )
         if pizda_answer1["statusCode"] > 0:
             return pizda_answer1
-        
+
         print("aliexpress_answer")
         aliexpress_answer = check(
-            message_text, r".*\b(али|алиекспресс?[А-я]?|алиэкспресс?[А-я]?|aliexpress|bangood)\b.*", "НЕ ПОКУПАЙ У КИТАЙЦЕВ ПОДУМОЙ", chat_id, reply_to, 101
+            message_text,
+            r".*\b(али|алиекспресс?[А-я]?|алиэкспресс?[А-я]?|aliexpress|bangood)\b.*",
+            "НЕ ПОКУПАЙ У КИТАЙЦЕВ ПОДУМОЙ",
+            chat_id,
+            reply_to,
+            101,
         )
         if aliexpress_answer["statusCode"] > 0:
             return aliexpress_answer
-        
-        print("moneyz")        
+
+        print("moneyz")
         moneyz_answer = check(
-            message_text, r"эй ричард, мне мало платят", "а я видел [тут](https://www.levels.fyi/Salaries/Software-Engineer/Netherlands/) плотют много! обманывают наверное!", chat_id, reply_to, 101
+            message_text,
+            r"эй ричард, мне мало платят",
+            "а я видел [тут](https://www.levels.fyi/Salaries/Software-Engineer/Netherlands/) плотют много! обманывают наверное!",
+            chat_id,
+            reply_to,
+            101,
         )
         if moneyz_answer["statusCode"] > 0:
             return moneyz_answer
 
         print("tier")
         tier_answer = check(
-            message_text, r".*\b[чЧ]то.*\b(такое|за)\b.*\b(тир|tir|tier)[123]?\??\b.*", "В конце-концов это [про деньги](https://blog.pragmaticengineer.com/software-engineering-salaries-in-the-netherlands-and-europe/)", chat_id, reply_to, 101
+            message_text,
+            r".*\b[чЧ]то.*\b(такое|за)\b.*\b(тир|tir|tier)[123]?\??\b.*",
+            "В конце-концов это [про деньги](https://blog.pragmaticengineer.com/software-engineering-salaries-in-the-netherlands-and-europe/)",
+            chat_id,
+            reply_to,
+            101,
         )
         if tier_answer["statusCode"] > 0:
             return tier_answer
