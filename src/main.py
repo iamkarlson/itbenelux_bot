@@ -5,7 +5,7 @@ import functions_framework
 from flask import Request, abort
 from telegram import Bot, Update, Message
 
-from .config import default_action, commands
+from .config import commands, invite_handler, auth_enabled, authorized_chats
 from .tracing.log import GCPLogger
 
 BOT_TOKEN = os.environ["BOT_TOKEN"]
@@ -27,25 +27,18 @@ def send_back(message: Message, text):
     bot.send_message(chat_id=message.chat_id, text=text)
 
 
-def handle_message(message: Message):
-    """
-    Handles incoming telegram message.
-    :param message: incoming telegram message
-    :return:
-    """
-    response = process_message(message)
-    if response:
-        send_back(message, response)
-    else:
-        send_back(message, "I don't understand")
+def callback(text: str, as_new: bool, parse_mode: str):
+    pass
 
 
 def process_message(message: Message):
     """
     Command handler for telegram bot.
     Differentiates between commands, new joiners, pictures, and regular messages.
+    TODO test with JSON deserialization
     """
-    # Check if the message is a command
+this method was returning a string, that was send using send_back method
+However, I removed this method, and now need to refactor all that shit to send in place (or somehow nicer)
     if message.text and message.text.startswith("/"):
         command_text = message.text.split("@")[0]  # Split command and bot's name
         command = commands.get(command_text)
@@ -53,24 +46,25 @@ def process_message(message: Message):
             return command(message)
         else:
             return "Unrecognized command"
-    elif message.new_chat_members:
-        pass
+    elif message.new_chat_members and len(message.new_chat_members) > 0:
+        if len(message.new_chat_members) > 1:
+            send_back(message, "Ох сколько народу-то!")
+        if message.from_user.id != message.new_chat_members[0].id:
+            # user invited by another user
+            invite_handler(message, callback)
+        else:
+            # new user joined by link
+            pass
     elif message.photo:
         pass
+    elif message.text:
+        # Regular message, needs to be answered with funny response
+        pass
     else:
-        return process_non_command(message)
-
-
-def process_non_command(message: Message):
-    # Your code here to process non-command messages
-    if default_action(message):
-        logger.info("Added to journal!")
-        return "Added to journal!"
-    else:
-        return "Failed to add to journal."
-
-
-authorized_chats = [int(x) for x in os.environ["AUTHORIZED_CHAT_IDS"].split(",")]
+        # Finally we cannot recognize the message so we abort it
+        # It will spam in logs, and it will fuck up the integration with webhooks.
+        # TODO setup some monitoring or error handling via GCP
+        raise NotImplementedError("Unsupported communication, sorry!")
 
 
 def auth_check(message: Message):
@@ -95,8 +89,8 @@ def handle(request: Request):
             incoming_data = request.get_json()
             logger.debug(incoming_data)
             update_message = Update.de_json(incoming_data, bot)
-            if auth_check(update_message.message):
-                handle_message(update_message.message)
+            if auth_enabled and auth_check(update_message.message):
+                process_message(update_message.message)
             return {"statusCode": 200}
         except Exception as e:
             logger.error(e)
