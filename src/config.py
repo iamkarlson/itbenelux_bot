@@ -1,6 +1,6 @@
 import os
 
-from .commands import *
+from .handlers import *
 
 commands = {
     "/start": command_start,

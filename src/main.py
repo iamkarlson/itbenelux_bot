@@ -8,6 +8,26 @@ from telegram import Bot, Update, Message
 from .config import commands, invite_handler, auth_enabled, authorized_chats
 from .tracing.log import GCPLogger
 
+"""
+
+This is the main entry point for the telegram bot.
+I want to keep this file as clean as possible, so I will try to move all the logic to other files.
+
+What can be done here:
+- parse incoming message
+- check if it is a command
+- check if it is a new user
+- check if it is a picture
+- check if it is a regular message
+- check if it is a reply
+- check if it is a forwarded message
+- check if it is a sticker
+- check if it is a video
+- check if it is a voice message
+
+
+"""
+
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 bot = Bot(token=BOT_TOKEN)
 
@@ -31,14 +51,16 @@ def callback(text: str, as_new: bool, parse_mode: str):
     pass
 
 
-def process_message(message: Message):
+def process_message(message: Message) -> (str, bool):
     """
     Command handler for telegram bot.
-    Differentiates between commands, new joiners, pictures, and regular messages.
+    Differentiates between handlers, new joiners, pictures, and regular messages.
     TODO test with JSON deserialization
+
+    :param message: incoming telegram message
+    :return: tuple from markdown response to the user and indication of replying to the message
     """
-this method was returning a string, that was send using send_back method
-However, I removed this method, and now need to refactor all that shit to send in place (or somehow nicer)
+
     if message.text and message.text.startswith("/"):
         command_text = message.text.split("@")[0]  # Split command and bot's name
         command = commands.get(command_text)
@@ -48,10 +70,10 @@ However, I removed this method, and now need to refactor all that shit to send i
             return "Unrecognized command"
     elif message.new_chat_members and len(message.new_chat_members) > 0:
         if len(message.new_chat_members) > 1:
-            send_back(message, "Ох сколько народу-то!")
+            return "Ох сколько народу-то!"
         if message.from_user.id != message.new_chat_members[0].id:
             # user invited by another user
-            invite_handler(message, callback)
+            return invite_handler(message, callback)
         else:
             # new user joined by link
             pass
@@ -82,7 +104,7 @@ def handle(request: Request):
     When request is received, body is parsed into standard telegram message model, and then forwarded to command handler.
     """
     if request.method == "GET":
-        return {"statusCode": 200}
+        return {"statusCode": 200, "body": "fuck off"}
     # when post is called, parse body into standard telegram message model, and then forward to command handler
     if request.method == "POST":
         try:
@@ -90,7 +112,8 @@ def handle(request: Request):
             logger.debug(incoming_data)
             update_message = Update.de_json(incoming_data, bot)
             if auth_enabled and auth_check(update_message.message):
-                process_message(update_message.message)
+                response = process_message(update_message.message)
+                send_back(message=update_message.message, text=response)
             return {"statusCode": 200}
         except Exception as e:
             logger.error(e)
