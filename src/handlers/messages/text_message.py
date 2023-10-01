@@ -5,6 +5,7 @@ from telegram import Message
 
 
 def handle_text_message(update: Message):
+
     try:
         chat_id = update.chat_id
         reply_to = update.message_id

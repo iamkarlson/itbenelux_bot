@@ -6,6 +6,8 @@ from flask import Request, abort
 from telegram import Bot, Update, Message
 
 from .config import commands, invite_handler, auth_enabled, authorized_chats
+from .handlers.messages.new_chat_members import new_joiner_handler
+from .models import SimpleResponse, ResponseType
 from .tracing.log import GCPLogger
 
 """
@@ -37,19 +39,21 @@ logging.setLoggerClass(GCPLogger)
 logger = logging.getLogger(__name__)
 
 
-def send_back(message: Message, text):
+def send_back(message: Message, response: SimpleResponse):
     """
     Sends a message back to the user. Using telegram bot's sendMessage method.
     :param message: incoming telegram message
     :param text:
     :return:
+    @param message: OG message from telegram. it's used to get chat_id and other stuff
+    @param response: indication of the responding to the user
     """
-    bot.send_message(chat_id=message.chat_id, text=text)
-
-
-def callback(text: str, as_new: bool, parse_mode: str):
-    pass
-
+    if response.type == ResponseType.text:
+        bot.send_message(chat_id=message.chat_id, text=response.data)
+    elif response.type == ResponseType.sticker:
+        bot.send_sticker(chat_id=message.chat_id, sticker=response.data)
+    else:
+        raise NotImplementedError("Unsupported response type")
 
 def process_message(message: Message) -> (str, bool):
     """
@@ -65,18 +69,18 @@ def process_message(message: Message) -> (str, bool):
         command_text = message.text.split("@")[0]  # Split command and bot's name
         command = commands.get(command_text)
         if command:
-            return command(message)
+            return SimpleResponse(data=command(message))
         else:
-            return "Unrecognized command"
+            return SimpleResponse(data="Unrecognized command")
     elif message.new_chat_members and len(message.new_chat_members) > 0:
         if len(message.new_chat_members) > 1:
-            return "Ох сколько народу-то!"
+            return SimpleResponse(data="Ох сколько народу-то!")
         if message.from_user.id != message.new_chat_members[0].id:
             # user invited by another user
-            return invite_handler(message, callback)
+            return SimpleResponse(data=invite_handler(message))
         else:
             # new user joined by link
-            pass
+            return SimpleResponse(data=new_joiner_handler(message))
     elif message.photo:
         pass
     elif message.text:
@@ -93,7 +97,7 @@ def auth_check(message: Message):
     if message.chat_id in authorized_chats:
         return True
     logger.info("Unauthorized chat id")
-    send_back(message, "It's not for you!")
+    send_back(message, SimpleResponse(data="It's not for you!"))
     return False
 
 
@@ -113,7 +117,7 @@ def handle(request: Request):
             update_message = Update.de_json(incoming_data, bot)
             if auth_enabled and auth_check(update_message.message):
                 response = process_message(update_message.message)
-                send_back(message=update_message.message, text=response)
+                send_back(message=update_message.message, response=response)
             return {"statusCode": 200}
         except Exception as e:
             logger.error(e)
