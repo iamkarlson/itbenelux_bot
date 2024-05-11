@@ -5,7 +5,7 @@ variable "project" {
 
 variable "region" {
   type    = string
-  default = "Bot for chat "IT talks Benelux""
+  default = "Bot for chat IT talks Benelux"
 }
 
 variable "name" {
