@@ -12,6 +12,22 @@ provider "google" {
   region  = var.region
 }
 
+variable "services" {
+  type = list(string)
+  default = [
+    "run.googleapis.com",
+    "cloudfunctions.googleapis.com",
+    "iam.googleapis.com",
+    "cloudbuild.googleapis.com",
+  ]
+}
+
+resource "google_project_service" "services" {
+  for_each = toset(var.services)
+  project  = var.project
+  service  = each.value
+}
+
 resource "random_id" "default" {
   byte_length = 8
 }
@@ -31,9 +47,13 @@ data "archive_file" "default" {
 
 locals {
   source_code_hash = filemd5(data.archive_file.default.output_path)
-  config = yamldecode(file("${path.module}/prod.env.yaml"))
+  config           = yamldecode(file("${path.module}/prod.env.yaml"))
 }
 
+resource "google_service_account" "service_account" {
+  account_id   = "${var.name}-sa"
+  display_name = "Service Account"
+}
 
 resource "google_storage_bucket_object" "object" {
   name   = "function-source-${local.source_code_hash}.zip"
@@ -42,13 +62,19 @@ resource "google_storage_bucket_object" "object" {
 }
 
 resource "google_cloudfunctions2_function" "bot" {
+  depends_on = [
+    google_storage_bucket_object.object,
+    google_service_account.service_account,
+    google_project_service.services,
+
+  ]
   name        = var.name
   description = var.description
 
   location = var.region
 
   build_config {
-    runtime     = "python311"
+    runtime     = "python312"
     entry_point = "handle" # Set the entry point
     source {
       storage_source {
@@ -65,6 +91,7 @@ resource "google_cloudfunctions2_function" "bot" {
     timeout_seconds       = 60
     ingress_settings      = "ALLOW_ALL"
     environment_variables = local.config
+    service_account_email = google_service_account.service_account.email
   }
 }
 

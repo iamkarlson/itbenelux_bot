@@ -1,0 +1,40 @@
+{
+  "update_id": 990685973,
+  "message": {
+    "message_id": 45,
+    "from": {
+      "id": 107262564,
+      "is_bot": false,
+      "first_name": "\\u16c3\\u16df\\u16ba\\u16be \\u16a0\\u16a8c\\u16d6\\u16da\\u16d6\\u16ca\\u16ca \\u16de\\u16df\\u16d6",
+      "username": "IamKarlson",
+      "language_code": "en",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -1001672520725,
+      "title": "\\u043d\\u0438\\u043a\\u043e\\u0433\\u043e TATATTATA test",
+      "type": "supergroup"
+    },
+    "date": 1695155160,
+    "new_chat_participant": {
+      "id": 6541156035,
+      "is_bot": true,
+      "first_name": "Richard Staging",
+      "username": "itbenelux_testing_bot"
+    },
+    "new_chat_member": {
+      "id": 6541156035,
+      "is_bot": true,
+      "first_name": "Richard Staging",
+      "username": "itbenelux_testing_bot"
+    },
+    "new_chat_members": [
+      {
+        "id": 6541156035,
+        "is_bot": true,
+        "first_name": "Richard Staging",
+        "username": "itbenelux_testing_bot"
+      }
+    ]
+  }
+}

@@ -5,7 +5,7 @@ variable "project" {
 
 variable "region" {
   type    = string
-  default = "Bot for chat IT talks Benelux"
+  default = "europe-west1"
 }
 
 variable "name" {
@@ -16,6 +16,6 @@ variable "name" {
 
 variable "description" {
   type    = string
-  default = "itbenelux-bot"
+  default = "Bot for chat IT talks Benelux"
 }
 

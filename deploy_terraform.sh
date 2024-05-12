@@ -2,13 +2,13 @@
 
 terraform init
 
-#terraform apply -auto-approve
+terraform apply -auto-approve
 
-# HOOK_URL=$(terraform output -raw function_uri)
+HOOK_URL=$(terraform output -raw function_uri)
 
-# BOT_NAME=$(terraform output -raw bot_name)
-# BOT_REGION=$(terraform output -raw bot_region)
-# BOT_PROJECT=$(terraform output -raw bot_project)
+BOT_NAME=$(terraform output -raw bot_name)
+BOT_REGION=$(terraform output -raw bot_region)
+BOT_PROJECT=$(terraform output -raw bot_project)
 
 # first I need to switch to a correct bot project
 # Project ID is parsed from the prod.env.yaml
@@ -26,10 +26,11 @@ echo "Var3 is $var3"
 
 # Fix permissions because fuck terraform
 # https://stackoverflow.com/questions/76592284/google-cloudfunctions-gen2-terraform-policy-doesnt-create-a-resource
-# gcloud functions add-invoker-policy-binding "$BOT_NAME" \
-#       --region="$BOT_REGION" \
-#       --member="allUsers"
+gcloud functions add-invoker-policy-binding "$BOT_NAME" \
+       --region="$BOT_REGION" \
+       --member="allUsers"
 
 
 #  # Registering bot in telegram API
-#  python -m setup_webhook "$HOOK_URL"
+echo "python -m setup_webhook '$BOT_TOKEN' '$HOOK_URL'"
+python -m setup_webhook $BOT_TOKEN "$HOOK_URL"

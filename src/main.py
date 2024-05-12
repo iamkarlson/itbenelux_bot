@@ -30,13 +30,17 @@ What can be done here:
 
 """
 
-BOT_TOKEN = os.environ["BOT_TOKEN"]
-bot = Bot(token=BOT_TOKEN)
+LOGLEVEL = os.environ.get("LOGLEVEL", "INFO").upper()
+logging.basicConfig(level=LOGLEVEL)
 
 # Set the new logger class
 logging.setLoggerClass(GCPLogger)
 
 logger = logging.getLogger(__name__)
+
+
+BOT_TOKEN = os.environ["BOT_TOKEN"]
+bot = Bot(token=BOT_TOKEN)
 
 
 def send_back(message: Message, response: SimpleResponse):
@@ -55,6 +59,7 @@ def send_back(message: Message, response: SimpleResponse):
     else:
         raise NotImplementedError("Unsupported response type")
 
+
 def process_message(message: Message) -> (str, bool):
     """
     Command handler for telegram bot.
@@ -66,6 +71,7 @@ def process_message(message: Message) -> (str, bool):
     """
 
     if message.text and message.text.startswith("/"):
+        logger.info("Command received")
         command_text = message.text.split("@")[0]  # Split command and bot's name
         command = commands.get(command_text)
         if command:
@@ -73,6 +79,7 @@ def process_message(message: Message) -> (str, bool):
         else:
             return SimpleResponse(data="Unrecognized command")
     elif message.new_chat_members and len(message.new_chat_members) > 0:
+        logger.info("New user joined")
         if len(message.new_chat_members) > 1:
             return SimpleResponse(data="Ох сколько народу-то!")
         if message.from_user.id != message.new_chat_members[0].id:
