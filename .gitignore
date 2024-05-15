@@ -162,6 +162,7 @@ cython_debug/
 
 # Do not push secrets
 prod.env.yaml
+test.env.yaml
 .autoenv.zsh
 .autoenv
 

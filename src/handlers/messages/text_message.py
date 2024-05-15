@@ -23,6 +23,8 @@ class TextMessageHandler:
         answer = opt['answer']
         ratio = opt['ratio']
 
+        regexp = regexp.replace("\\\\", "\\")
+
         p_rg = re.compile(regexp, re.IGNORECASE)
         if p_rg.match(message):
             rand = random.randint(1, 100)

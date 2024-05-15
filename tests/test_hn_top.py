@@ -33,9 +33,10 @@ class MessageHandlerTest(TestCase):
         self.handler = TextMessageHandler(config_path="src/handlers/messages/options.yaml")
 
     def test_hacker_news(self):
-        uber_test_text = "эй ричард, как там на передовой?"
-        message = Message(text=uber_test_text, chat=Chat(id=1, type="test"), date=datetime.now(), message_id=1)
+        test_text = "эй ричард, как там на передовой?"
+        message = Message(text=test_text, chat=Chat(id=1, type="test"), date=datetime.now(), message_id=1)
         answer: SimpleResponse = self.handler.handle_text_message(message, force_ratio=True)
 
         self.assertIsNotNone(answer)
-        self.assertEqual("так убер же всех разогнал!", answer.data)
+        self.assertIn("все идет по плану. новости вот читаю:", answer.data)
+
