@@ -1,20 +1,20 @@
 - regexp: "эй ричард, как там на передовой\\?"
-  answer: "все идет по плану. новости вот читаю: [%s](%s)"
+  answer: "все идет по плану. новости вот читаю: [{}]({})"
   ratio: 100
   extra: "hn_top"
 
 - regexp: ".*((\\bя\\b)|(\\bбля\\b)|([aа]{3,})).*\\bор(у|ну)\\b.*"
-  answer: "{orevo_sticker}"
+  answer: "CAADAgADxgADcQtCBUlZU0nRjfxRAg"
   ratio: 100
   type: "sticker"
 
 - regexp: ".*\\b(джав(к)?(ейк)?(еечк)?(а|е|ой|у)|java)\\b.*"
   answer: "так джава же говно"
-  ratio: "{rand_ratio}"
+  ratio: 80
 
 - regexp: ".*\\b((убер(а|е|ом|у)?)|uber)\\b.*"
   answer: "так убер же всех разогнал!"
-  ratio: "{rand_ratio}"
+  ratio: 75
 
 - regexp: ".*\\bричард\\b.*\\bпочему\\b.*\\bты\\b.*\\bне\\b.*"
   answer: "я что, дурак?"
@@ -22,27 +22,27 @@
 
 - regexp: ".*\\b(руби|ruby)\\b.*"
   answer: "руби мёртв"
-  ratio: "{rand_ratio}"
+  ratio: 77
 
 - regexp: ".*\\b(сетевик)\\b.*"
   answer: "сетевик хуже фронтендера"
-  ratio: "{rand_ratio}"
+  ratio: 100
 
 - regexp: ".*\\b(б[еи]гемот?с?т?в[оаие]|б[еи]гемотт?[оаие]|б[еи]гемос?тв[оаие])\\b.*"
   answer: "аминь"
-  ratio: "{rand_ratio}"
+  ratio: 50
 
 - regexp: ".*\\b(б-мот|б-мотств[оаие]|б-мотт[оаие])\\b.*"
   answer: "ам-инь"
-  ratio: "{rand_ratio}"
+  ratio: 100
 
 - regexp: "да[.!\\)]?$"
   answer: "фрибэсда"
-  ratio: "{rand_ratio}"
+  ratio: 50
 
 - regexp: "нет[.!\\)]?$"
   answer: "эникейщика ответ"
-  ratio: "{rand_ratio}"
+  ratio: 50
 
 - regexp: ".*\\b(али|алиекспресс?[А-я]?|алиэкспресс?[А-я]?|aliexpress|bangood)\\b.*"
   answer: "НЕ ПОКУПАЙ У КИТАЙЦЕВ ПОДУМОЙ"

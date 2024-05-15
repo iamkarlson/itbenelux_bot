@@ -5,7 +5,7 @@ from unittest import TestCase
 
 from telegram import Update, Bot
 
-from src.main import handle_message
+from src.main import process_message
 
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 bot = Bot(token=BOT_TOKEN)
@@ -20,5 +20,5 @@ class Test(TestCase):
             print(test_data)
 
             update_message = Update.de_json(test_data, bot)
-            handle_message(update_message.message)
+            process_message(update_message.message)
             self.fail()

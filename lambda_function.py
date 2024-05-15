@@ -150,7 +150,7 @@ def lambda_handler(event, context):
         news_rg = re.compile(r"эй ричард, как там на передовой\?", re.IGNORECASE)
         if news_rg.match(message_text):
             print("news message")
-            url, text = hn_top.get_top()
+            url, text = hn_top.get_hh_top_story_link()
             send_message(
                 "все идет по плану. новости вот читаю: [%s](%s)" % (text, url),
                 chat_id,

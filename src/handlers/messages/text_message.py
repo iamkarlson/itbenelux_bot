@@ -1,12 +1,16 @@
+import logging
 import random
 import re
 
 import yaml
 from telegram import Message
 
-from src.models import ResponseType, SimpleResponse
-from src.stuff import hn_top
+from .models import ResponseType, SimpleResponse
+from .stuff import hn_top
 
+hn_top_action = hn_top.HackerNewsAction()
+
+logger = logging.getLogger(__name__)
 
 class TextMessageHandler:
 
@@ -14,36 +18,42 @@ class TextMessageHandler:
         with open(config_path, "r") as f:
             self.options = yaml.safe_load(f)
 
-    def check(self, message, regexp, answer, ratio):
+    def check(self, message, opt, force_ratio) -> SimpleResponse | None:
+        regexp = opt['regexp']
+        answer = opt['answer']
+        ratio = opt['ratio']
+
         p_rg = re.compile(regexp, re.IGNORECASE)
         if p_rg.match(message):
             rand = random.randint(1, 100)
-            if rand < ratio:
+
+            if 'extra' in opt and opt['extra'] == 'hn_top':
+                extra_data = hn_top_action.get_hn_top_story_link()
+                answer = answer.format(*extra_data) if extra_data else "I'm so sorry but I'm lost"
+
+            if rand < ratio or force_ratio:
                 return SimpleResponse(data=answer)
             else:
-                print(f"{answer} is skipped")
+                logger.warning(f"{answer} is skipped")
                 return None
 
-    def handle_text_message(self, update: Message):
+    def handle_text_message(self, update: Message, force_ratio: bool = False) -> SimpleResponse:
         try:
             message_text = update.text.lower()
 
             for opt in self.options:
-                extra_data = None
-                if 'extra' in opt and opt['extra'] == 'hn_top':
-                    extra_data = hn_top.get_top()
                 answer = self.check(
                     message_text,
-                    opt["regexp"],
-                    opt.get("answer", "").format(*extra_data) if extra_data else opt.get("answer", ""),
-                    opt["ratio"]
+                    opt,
+                    force_ratio
+
                 )
                 if answer:
                     if 'type' in opt:
                         answer.type = ResponseType[opt['type']]
                     return answer
         except Exception as e:
-            print("error occurred")
+            logger.error("error occurred")
             print(e)
 
 

@@ -4,10 +4,12 @@ import os
 import functions_framework
 from flask import Request, abort
 from telegram import Bot, Update, Message
+from unsync import unsync
 
-from .config import commands, invite_handler, auth_enabled, authorized_chats
+from .config import commands, invite_handler, authorized_chats
+from .handlers.messages.models import SimpleResponse, ResponseType
 from .handlers.messages.new_chat_members import new_joiner_handler
-from .models import SimpleResponse, ResponseType
+from .handlers.messages.text_message import TextMessageHandler
 from .tracing.log import GCPLogger
 
 """
@@ -38,12 +40,14 @@ logging.setLoggerClass(GCPLogger)
 
 logger = logging.getLogger(__name__)
 
-
-BOT_TOKEN = os.environ["BOT_TOKEN"]
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
 bot = Bot(token=BOT_TOKEN)
 
+text_message_handler = TextMessageHandler(config_path="handlers/messages/options.yaml")
 
-def send_back(message: Message, response: SimpleResponse):
+
+@unsync
+async def send_back(message: Message, response: SimpleResponse):
     """
     Sends a message back to the user. Using telegram bot's sendMessage method.
     :param message: incoming telegram message
@@ -52,11 +56,16 @@ def send_back(message: Message, response: SimpleResponse):
     @param message: OG message from telegram. it's used to get chat_id and other stuff
     @param response: indication of the responding to the user
     """
+    logger.debug("Sending response")
     if response.type == ResponseType.text:
-        bot.send_message(chat_id=message.chat_id, text=response.data)
+        await bot.send_message(chat_id=message.chat_id,
+                               reply_to_message_id=message.id,
+                               text=response.data,
+                               parse_mode="Markdown")
     elif response.type == ResponseType.sticker:
-        bot.send_sticker(chat_id=message.chat_id, sticker=response.data)
+        await bot.send_sticker(chat_id=message.chat_id, reply_to_message_id=message.id, sticker=response.data)
     else:
+        logger.error("Unsupported response type")
         raise NotImplementedError("Unsupported response type")
 
 
@@ -70,10 +79,14 @@ def process_message(message: Message) -> (str, bool):
     :return: tuple from markdown response to the user and indication of replying to the message
     """
 
+    logger.debug("Processing message")
+    # logger.debug(message)
+
     if message.text and message.text.startswith("/"):
-        logger.info("Command received")
+        logger.info("Command message received")
         command_text = message.text.split("@")[0]  # Split command and bot's name
         command = commands.get(command_text)
+        logger.info(f"Command: {command_text}")
         if command:
             return SimpleResponse(data=command(message))
         else:
@@ -92,7 +105,11 @@ def process_message(message: Message) -> (str, bool):
         pass
     elif message.text:
         # Regular message, needs to be answered with funny response
-        pass
+        logger.info("Regular message received")
+        answer = text_message_handler.handle_text_message(message)
+        if answer:
+            logger.debug(f"Answer: {answer.data}")
+        return answer
     else:
         # Finally we cannot recognize the message so we abort it
         # It will spam in logs, and it will fuck up the integration with webhooks.
@@ -104,6 +121,7 @@ def auth_check(message: Message):
     if message.chat_id in authorized_chats:
         return True
     logger.info("Unauthorized chat id")
+    logger.warning(f"User chat id: {message.chat_id} (from @{message.from_user.username})")
     send_back(message, SimpleResponse(data="It's not for you!"))
     return False
 
@@ -122,9 +140,10 @@ def handle(request: Request):
             incoming_data = request.get_json()
             logger.debug(incoming_data)
             update_message = Update.de_json(incoming_data, bot)
-            if auth_enabled and auth_check(update_message.message):
+            if auth_check(update_message.message):
                 response = process_message(update_message.message)
-                send_back(message=update_message.message, response=response)
+                if response:
+                    send_back(message=update_message.message, response=response)
             return {"statusCode": 200}
         except Exception as e:
             logger.error(e)
