@@ -82,16 +82,7 @@ def process_message(message: Message) -> (str, bool):
     logger.debug("Processing message")
     # logger.debug(message)
 
-    if message.text and message.text.startswith("/"):
-        logger.info("Command message received")
-        command_text = message.text.split("@")[0]  # Split command and bot's name
-        command = commands.get(command_text)
-        logger.info(f"Command: {command_text}")
-        if command:
-            return SimpleResponse(data=command(message))
-        else:
-            return SimpleResponse(data="Unrecognized command")
-    elif message.new_chat_members and len(message.new_chat_members) > 0:
+    if message.new_chat_members and len(message.new_chat_members) > 0:
         logger.info("New user joined")
         if len(message.new_chat_members) > 1:
             return SimpleResponse(data="Ох сколько народу-то!")
