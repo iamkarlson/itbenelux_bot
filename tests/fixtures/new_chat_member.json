@@ -1,0 +1,47 @@
+{
+  "update_id": 990685903,
+  "message": {
+    "message_id": 515110,
+    "from": {
+      "id": 365145500,
+      "is_bot": false,
+      "first_name": "Anton",
+      "last_name": "Berdnik",
+      "username": "avberdnik",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -1001235860760,
+      "title": "it talks benelux - sacchi di carne tossici",
+      "username": "ITBenelux",
+      "type": "supergroup"
+    },
+    "date": 1695150651,
+    "new_chat_participant": {
+      "id": 365145500,
+      "is_bot": false,
+      "first_name": "Anton",
+      "last_name": "Berdnik",
+      "username": "avberdnik",
+      "is_premium": true
+    },
+    "new_chat_member": {
+      "id": 365145500,
+      "is_bot": false,
+      "first_name": "Anton",
+      "last_name": "Berdnik",
+      "username": "avberdnik",
+      "is_premium": true
+    },
+    "new_chat_members": [
+      {
+        "id": 365145500,
+        "is_bot": false,
+        "first_name": "Anton",
+        "last_name": "Berdnik",
+        "username": "avberdnik",
+        "is_premium": true
+      }
+    ]
+  }
+}

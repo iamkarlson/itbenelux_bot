@@ -1,0 +1,73 @@
+{
+  'resource': '/',
+  'path': '/',
+  'httpMethod': 'POST',
+  'headers': {
+    'Accept-Encoding': 'gzip, deflate',
+    'Content-Type': 'application/json',
+    'Host': 'xihmnbkh3d.execute-api.eu-central-1.amazonaws.com',
+    'X-Amzn-Trace-Id': 'Root=1-6509f9a4-274a86222ece4ef22ea2a809',
+    'X-Forwarded-For': '91.108.6.109',
+    'X-Forwarded-Port': '443',
+    'X-Forwarded-Proto': 'https'
+  },
+  'multiValueHeaders': {
+    'Accept-Encoding': [
+      'gzip, deflate'
+    ],
+    'Content-Type': [
+      'application/json'
+    ],
+    'Host': [
+      'xihmnbkh3d.execute-api.eu-central-1.amazonaws.com'
+    ],
+    'X-Amzn-Trace-Id': [
+      'Root=1-6509f9a4-274a86222ece4ef22ea2a809'
+    ],
+    'X-Forwarded-For': [
+      '91.108.6.109'
+    ],
+    'X-Forwarded-Port': [
+      '443'
+    ],
+    'X-Forwarded-Proto': [
+      'https'
+    ]
+  },
+  'queryStringParameters': None,
+  'multiValueQueryStringParameters': None,
+  'pathParameters': None,
+  'stageVariables': None,
+  'requestContext': {
+    'resourceId': 'xc6e7mrxg8',
+    'resourcePath': '/',
+    'httpMethod': 'POST',
+    'extendedRequestId': 'LhPxvGCBFiAFYqw=',
+    'requestTime': '19/Sep/2023:19:42:28 +0000',
+    'path': '/prod/',
+    'accountId': '062745779142',
+    'protocol': 'HTTP/1.1',
+    'stage': 'prod',
+    'domainPrefix': 'xihmnbkh3d',
+    'requestTimeEpoch': 1695152548445,
+    'requestId': 'f7272339-7d05-4ee3-a009-5d6457ec0b79',
+    'identity': {
+      'cognitoIdentityPoolId': None,
+      'accountId': None,
+      'cognitoIdentityId': None,
+      'caller': None,
+      'sourceIp': '91.108.6.109',
+      'principalOrgId': None,
+      'accessKey': None,
+      'cognitoAuthenticationType': None,
+      'cognitoAuthenticationProvider': None,
+      'userArn': None,
+      'userAgent': None,
+      'user': None
+    },
+    'domainName': 'xihmnbkh3d.execute-api.eu-central-1.amazonaws.com',
+    'apiId': 'xihmnbkh3d'
+  },
+  'body': '{"update_id":990685955,\n"message":{"message_id":515158,"from":{"id":364447082,"is_bot":false,"first_name":"Panchenko","last_name":"Andrii","username":"andy_ap"},"chat":{"id":-1001235860760,"title":"it talks benelux - sacchi di carne tossici","username":"ITBenelux","type":"supergroup"},"date":1695152548,"text":"\\u044f \\u0447\\u0443\\u0432\\u0441\\u0442\\u0443\\u044e \\u043f\\u043e\\u043c\\u0430\\u0437\\u0430\\u043d\\u044c\\u0435"}}',
+  'isBase64Encoded': False
+}

@@ -1,30 +1,31 @@
-# itbenelux_bot
-Functions:
+# Richard Stallman Bot
 
-* Warm welcome messages
-* Support participants when they are in difficult life situations
+Bot for chat "IT talks Benelux"
+
+# Why
+
+Because I can.
+
+# Init
+
+Create a GCP project. `create_infra.sh` will do it for you. You still need to enable billing for this account. Open this link https://console.cloud.google.com/billing/linkedaccount?project=itbenelux-bot and click "Link a billing account". You can use your existing billing account or create a new one.
 
 
-## Notes
+# Deploy with terraform
+3. Fix variables.tf (put them in damn secrets)
+4. Run `deploy_terraform.sh`
+5. Send your damn messages to your bot
 
-### Sync code from AWS to repo
+# Deploy without terraform
 
-```
-curl (aws lambda get-function --function-name "itbenelux_bot"|ConvertFrom-Json).Code.Location -o sources.zip; 7z x -y sources.zip; rm sources.zip; g add .; g commit ;g push
-```
+1. Put your damn secrets in `prod.env.yaml`
+2. Run `deploy_gcloud.sh`
+3. Register webhook with `setup_webhook.py`. 
+  * this sucks because you have to do it manually comparing to terraform
+4. Send your damn messages to your bot
 
-### Publish from local code
 
-Useful guide:
-[Publishing Your Skill Code to Lambda via the Command Line Interface](https://developer.amazon.com/blogs/alexa/post/Tx1UE9W1NQ0GYII/publishing-your-skill-code-to-lambda-via-the-command-line-interface)
+# Code structure
 
-#### Windows batch file:
-```
-del index.zip 
-cd lambda 
-7z a -r ..\index.zip *
-cd .. 
-aws lambda update-function-code --function-name itbenelux_bot --zip-file fileb://index.zip
-```
-
-Find a ready to go batch file in this repo called *publish.bat*
+- `main.py` - entrypoint
+- `config.py` - config for the bot, set ups all the configuration for different tasks. 

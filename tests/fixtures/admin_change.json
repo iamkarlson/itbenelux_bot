@@ -1,0 +1,49 @@
+{
+  "update_id": 990685635,
+  "my_chat_member": {
+    "chat": {
+      "id": -1001672520725,
+      "title": "\\u043d\\u0438\\u043a\\u043e\\u0433\\u043e TATATTATA test",
+      "type": "supergroup"
+    },
+    "from": {
+      "id": 107262564,
+      "is_bot": false,
+      "first_name": "\\u16c3\\u16df\\u16ba\\u16be \\u16a0\\u16a8c\\u16d6\\u16da\\u16d6\\u16ca\\u16ca \\u16de\\u16df\\u16d6",
+      "username": "IamKarlson",
+      "language_code": "en",
+      "is_premium": true
+    },
+    "date": 1695069369,
+    "old_chat_member": {
+      "user": {
+        "id": 730953590,
+        "is_bot": true,
+        "first_name": "Richard Stallman",
+        "username": "itbenelux_bot"
+      },
+      "status": "member"
+    },
+    "new_chat_member": {
+      "user": {
+        "id": 730953590,
+        "is_bot": true,
+        "first_name": "Richard Stallman",
+        "username": "itbenelux_bot"
+      },
+      "status": "administrator",
+      "can_be_edited": false,
+      "can_manage_chat": true,
+      "can_change_info": true,
+      "can_delete_messages": true,
+      "can_invite_users": true,
+      "can_restrict_members": true,
+      "can_pin_messages": true,
+      "can_manage_topics": false,
+      "can_promote_members": false,
+      "can_manage_video_chats": true,
+      "is_anonymous": false,
+      "can_manage_voice_chats": true
+    }
+  }
+}
