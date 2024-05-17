@@ -7,6 +7,9 @@ from telegram import Bot, Update, Message
 from unsync import unsync
 
 from .config import commands, invite_handler, authorized_chats
+import sentry_sdk
+from sentry_sdk.integrations.gcp import GcpIntegration
+
 from .handlers.messages.models import SimpleResponse, ResponseType
 from .handlers.messages.new_chat_members import new_joiner_handler
 from .handlers.messages.text_message import TextMessageHandler
@@ -43,6 +46,21 @@ logger = logging.getLogger(__name__)
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
 bot = Bot(token=BOT_TOKEN)
 
+SENTRY_DSN = os.environ.get("SENTRY_DSN", "")
+
+sentry_sdk.init(
+    dsn=SENTRY_DSN,
+    integrations=[GcpIntegration()],
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    traces_sample_rate=1.0,
+    # Set profiles_sample_rate to 1.0 to profile 100%
+    # of sampled transactions.
+    # We recommend adjusting this value in production.
+    profiles_sample_rate=1.0,
+)
+
+
 text_message_handler = TextMessageHandler(config_path="handlers/messages/options.yaml")
 
 
@@ -58,12 +76,18 @@ async def send_back(message: Message, response: SimpleResponse):
     """
     logger.debug("Sending response")
     if response.type == ResponseType.text:
-        await bot.send_message(chat_id=message.chat_id,
-                               reply_to_message_id=message.id,
-                               text=response.data,
-                               parse_mode="Markdown")
+        await bot.send_message(
+            chat_id=message.chat_id,
+            reply_to_message_id=message.id,
+            text=response.data,
+            parse_mode="Markdown",
+        )
     elif response.type == ResponseType.sticker:
-        await bot.send_sticker(chat_id=message.chat_id, reply_to_message_id=message.id, sticker=response.data)
+        await bot.send_sticker(
+            chat_id=message.chat_id,
+            reply_to_message_id=message.id,
+            sticker=response.data,
+        )
     else:
         logger.error("Unsupported response type")
         raise NotImplementedError("Unsupported response type")
@@ -109,10 +133,12 @@ def process_message(message: Message) -> (str, bool):
 
 
 def auth_check(message: Message):
-    if message.chat_id in authorized_chats:
+    if message.chat.id in authorized_chats:
         return True
     logger.info("Unauthorized chat id")
-    logger.warning(f"User chat id: {message.chat_id} (from @{message.from_user.username})")
+    logger.warning(
+        f"User chat id: {message.chat.id} (from @{message.from_user.username})"
+    )
     send_back(message, SimpleResponse(data="It's not for you!"))
     return False
 
@@ -129,15 +155,18 @@ def handle(request: Request):
     if request.method == "POST":
         try:
             incoming_data = request.get_json()
-            logger.debug(incoming_data)
+            logger.debug(f"incoming data: {incoming_data}")
             update_message = Update.de_json(incoming_data, bot)
-            if auth_check(update_message.message):
-                response = process_message(update_message.message)
+            message = update_message.message or update_message.edited_message
+            if auth_check(message):
+                response = process_message(message)
                 if response:
-                    send_back(message=update_message.message, response=response)
+                    send_back(message=message, response=response)
             return {"statusCode": 200}
         except Exception as e:
-            logger.error(e)
+            sentry_sdk.capture_exception(e)
+            logger.error("Error occurred but message wasn't processed")
+            return {"statusCode": 200}
 
     # Unprocessable entity
     abort(422)
