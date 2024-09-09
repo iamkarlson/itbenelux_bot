@@ -104,7 +104,6 @@ def process_message(message: Message) -> (str, bool):
     """
 
     logger.debug("Processing message")
-    # logger.debug(message)
 
     if message.new_chat_members and len(message.new_chat_members) > 0:
         logger.info("New user joined")
@@ -116,10 +115,9 @@ def process_message(message: Message) -> (str, bool):
         else:
             # new user joined by link
             return SimpleResponse(data=new_joiner_handler(message))
-    elif message.photo:
-        pass
-    elif message.text:
-        # Regular message, needs to be answered with funny response
+    elif message.photo or message.text:
+        # On a regular message, needs to be answered with funny response
+        # Even if it's a photo, we can still process it as a regular message based on the `caption`
         logger.info("Regular message received")
         answer = text_message_handler.handle_text_message(message)
         if answer:
@@ -146,8 +144,21 @@ def auth_check(message: Message):
 @functions_framework.http
 def handle(request: Request):
     """
+    ================================================================================
+
     Incoming telegram webhook handler for a GCP Cloud Function.
     When request is received, body is parsed into standard telegram message model, and then forwarded to command handler.
+
+    Process is the following:
+    - auth_check -> chat validation
+    - process_message -> make a response
+    - send_back -> send a formatted response back
+
+
+    The whole thing is wrapped in sentry to catch any exceptions.
+    If an exception is caught, I send HTTP200 back to telegram.
+
+    ================================================================================
     """
     if request.method == "GET":
         return {"statusCode": 200, "body": "fuck off"}

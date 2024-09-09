@@ -20,9 +20,9 @@ while IFS="=" read -r key value; do
 done < <(yq -r 'keys[] as $k | "\($k)=\(.[$k])"' prod.env.yaml)
 
 # Now, all variables are set and can be used later in the script
-echo "BOT_TOKEN is $BOT_TOKEN"
-echo "AUTHORIZED_CHAT_IDS is $AUTHORIZED_CHAT_IDS"
-echo "Var3 is $var3"
+#echo "BOT_TOKEN is $BOT_TOKEN"
+#echo "AUTHORIZED_CHAT_IDS is $AUTHORIZED_CHAT_IDS"
+#echo "Var3 is $var3"
 
 # Fix permissions because fuck terraform
 # https://stackoverflow.com/questions/76592284/google-cloudfunctions-gen2-terraform-policy-doesnt-create-a-resource
@@ -32,5 +32,5 @@ gcloud functions add-invoker-policy-binding "$BOT_NAME" \
 
 
 #  # Registering bot in telegram API
-echo "python -m setup_webhook '$BOT_TOKEN' '$HOOK_URL'"
+#echo "python -m setup_webhook '$BOT_TOKEN' '$HOOK_URL'"
 python -m setup_webhook $BOT_TOKEN "$HOOK_URL"

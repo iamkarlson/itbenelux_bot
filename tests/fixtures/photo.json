@@ -1,0 +1,51 @@
+  {
+  "update_id": 664906128,
+  "message": {
+    "message_id": 336,
+    "from": {
+      "id": 999999999,
+      "is_bot": false,
+      "first_name": "ᛃᛟᚺᚾ ᚠᚨcᛖᛚᛖᛊᛊ ᛞᛟᛖ",
+      "username": "IamKarlson",
+      "language_code": "en",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -1111111111111,
+      "title": "никого TATATTATA test",
+      "type": "supergroup"
+    },
+    "date": 1725875021,
+    "photo": [
+      {
+        "file_id": "AgACAgQAAx0CY7CkFQACAVBm3sNNITwRn68vKIgPYe1h8UkZDwACDcYxG4DZ8VJyn7OQHRaKQgEAAwIAA3MAAzYE",
+        "file_unique_id": "AQADDcYxG4DZ8VJ4",
+        "file_size": 650,
+        "width": 90,
+        "height": 51
+      },
+      {
+        "file_id": "AgACAgQAAx0CY7CkFQACAVBm3sNNITwRn68vKIgPYe1h8UkZDwACDcYxG4DZ8VJyn7OQHRaKQgEAAwIAA20AAzYE",
+        "file_unique_id": "AQADDcYxG4DZ8VJy",
+        "file_size": 5354,
+        "width": 320,
+        "height": 180
+      },
+      {
+        "file_id": "AgACAgQAAx0CY7CkFQACAVBm3sNNITwRn68vKIgPYe1h8UkZDwACDcYxG4DZ8VJyn7OQHRaKQgEAAwIAA3gAAzYE",
+        "file_unique_id": "AQADDcYxG4DZ8VJ9",
+        "file_size": 17910,
+        "width": 800,
+        "height": 451
+      },
+      {
+        "file_id": "AgACAgQAAx0CY7CkFQACAVBm3sNNITwRn68vKIgPYe1h8UkZDwACDcYxG4DZ8VJyn7OQHRaKQgEAAwIAA3kAAzYE",
+        "file_unique_id": "AQADDcYxG4DZ8VJ-",
+        "file_size": 32435,
+        "width": 1280,
+        "height": 721
+      }
+    ],
+    "caption": "джава"
+  }
+}

@@ -41,7 +41,14 @@ class TextMessageHandler:
 
     def handle_text_message(self, update: Message, force_ratio: bool = False) -> SimpleResponse:
         try:
-            message_text = update.text.lower()
+            if update.text:
+                message_text = update.text.lower()
+            elif update.caption:
+                message_text = update.caption.lower()
+            else:
+                logger.error("No text in the message")
+                raise ValueError("No text in the message")
+
 
             for opt in self.options:
                 answer = self.check(
