@@ -10,3 +10,5 @@ commands = {
 
 authorized_chats = [int(x) for x in os.environ.get("AUTHORIZED_CHAT_IDS", "0").split(",")]
 auth_enabled = False
+
+

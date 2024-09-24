@@ -18,10 +18,10 @@ class TestHackerNewsAction(TestCase):
 
     def test_get_hh_top_story_link(self):
 
-        url, text = self.hna.get_hn_top_story_link()
+        title, url = self.hna.get_hn_top_story_link()
         self.assertTrue(url.startswith("http"))
-        self.assertTrue(len(text) > 0)
-        print(url, text)
+        self.assertTrue(len(title) > 0)
+        print(url, title)
 
 
 class MessageHandlerTest(TestCase):
@@ -30,7 +30,7 @@ class MessageHandlerTest(TestCase):
     """
 
     def setUp(self):
-        self.handler = TextMessageHandler(config_path="src/handlers/messages/options.yaml")
+        self.handler = TextMessageHandler(config_path="src/resources/options.yaml")
 
     def test_hacker_news(self):
         test_text = "эй ричард, как там на передовой?"

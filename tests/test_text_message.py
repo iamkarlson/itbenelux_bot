@@ -13,7 +13,7 @@ class MessageHandlerTest(TestCase):
     """
 
     def setUp(self):
-        self.handler = TextMessageHandler(config_path="src/handlers/messages/options.yaml")
+        self.handler = TextMessageHandler(config_path="src/resources/options.yaml")
 
     def test_uber(self):
         uber_test_text = "в убере вроде, но тут писали, что его вроде выперли\nв общем на самом деле неизвестно"

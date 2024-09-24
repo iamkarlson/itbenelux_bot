@@ -5,6 +5,7 @@ import re
 import yaml
 from telegram import Message
 
+from src.handlers.messages.stuff.aux import get_text
 from .models import ResponseType, SimpleResponse
 from .stuff import hn_top
 
@@ -41,13 +42,7 @@ class TextMessageHandler:
 
     def handle_text_message(self, update: Message, force_ratio: bool = False) -> SimpleResponse:
         try:
-            if update.text:
-                message_text = update.text.lower()
-            elif update.caption:
-                message_text = update.caption.lower()
-            else:
-                logger.error("No text in the message")
-                raise ValueError("No text in the message")
+            message_text = get_text(update)
 
 
             for opt in self.options:

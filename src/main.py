@@ -6,13 +6,16 @@ from flask import Request, abort
 from telegram import Bot, Update, Message
 from unsync import unsync
 
-from .config import commands, invite_handler, authorized_chats
+from .config import invite_handler, authorized_chats
+from .handlers.messages.stuff.aux import get_text
+from .spam import SpamWordsSearcher
+
 import sentry_sdk
 from sentry_sdk.integrations.gcp import GcpIntegration
 
 from .handlers.messages.models import SimpleResponse, ResponseType
 from .handlers.messages.new_chat_members import new_joiner_handler
-from .handlers.messages.text_message import TextMessageHandler
+from .handlers.messages.text_message import TextMessageHandler, logger
 from .tracing.log import GCPLogger
 
 """
@@ -60,8 +63,10 @@ sentry_sdk.init(
     profiles_sample_rate=1.0,
 )
 
+spam_detector = SpamWordsSearcher("resources/trigger_words.yaml")
+SPAM_MIN_WEIGHT = 100
 
-text_message_handler = TextMessageHandler(config_path="handlers/messages/options.yaml")
+text_message_handler = TextMessageHandler(config_path="resources/options.yaml")
 
 
 @unsync
@@ -91,6 +96,24 @@ async def send_back(message: Message, response: SimpleResponse):
     else:
         logger.error("Unsupported response type")
         raise NotImplementedError("Unsupported response type")
+
+
+@unsync
+async def kick(message: Message):
+    """
+    Function to handle spam messages. For now, it just sends a "SPAM" message as a response
+    without actually kicking the user.
+
+    :param message: incoming telegram message
+    :return: None
+    """
+    logger.info(f"Spam detected from user: {message.from_user.username}")
+    await bot.send_message(
+        chat_id=message.chat_id,
+        reply_to_message_id=message.id,
+        text="SPAM",
+        parse_mode="Markdown"
+    )
 
 
 def process_message(message: Message) -> (str, bool):
@@ -141,6 +164,33 @@ def auth_check(message: Message):
     return False
 
 
+
+def calculate_spam_words_weights(message):
+    """
+    Function extract trigger words from the message and returns accumulative spam weights
+
+    Trigger words are defined with weight each in TRIGGER_WORDS
+    @param message:
+    @return:
+    """
+    text = get_text(message)
+    found_words = spam_detector.search(text)
+
+    # Calculate the total weight of found spam words
+    total_weight = sum(spam_word.weight for spam_word in found_words)
+
+    if total_weight > 0:
+        logger.warning(f"There are a few spam words found: {[spam_word.word for spam_word in found_words]}")
+
+    return total_weight
+def spam_check(message):
+    weights = calculate_spam_words_weights(message)
+    #weights += calculate_user_weigths(message)
+    if weights >= SPAM_MIN_WEIGHT:
+        return True
+    return False
+
+
 @functions_framework.http
 def handle(request: Request):
     """
@@ -170,6 +220,9 @@ def handle(request: Request):
             update_message = Update.de_json(incoming_data, bot)
             message = update_message.message or update_message.edited_message
             if auth_check(message):
+                is_spam = spam_check(message)
+                if is_spam:
+                    kick(message)
                 response = process_message(message)
                 if response:
                     send_back(message=message, response=response)
@@ -181,3 +234,5 @@ def handle(request: Request):
 
     # Unprocessable entity
     abort(422)
+
+
