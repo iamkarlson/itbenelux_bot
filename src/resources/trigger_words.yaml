@@ -7,19 +7,19 @@ words:
     weight: 500
   - word: предложение
     weight: 400
+  - word: пacивный
+    weight: 300
   - word: заработок
+    weight: 300
+  - word: доход
     weight: 300
   - word: работа
     weight: 100
   - word: вакансия
-    weight: 100
-  - word: доход
     weight: 100
   - word: рынок
     weight: 100
   - word: деньги
     weight: 100
   - word: набирать
-    weight: 50
-  - word: пacивный
     weight: 50
