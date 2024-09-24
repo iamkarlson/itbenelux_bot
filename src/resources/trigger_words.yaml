@@ -3,3 +3,13 @@ words:
   weight: 300
 - word: предложение
   weight: 200
+- word: работа
+  weight: 100
+- word: вакансия
+  weight: 100
+- word: пacивный
+  weight: 50
+- word: доход
+  weight: 100
+- word: крипта
+  weight: 500

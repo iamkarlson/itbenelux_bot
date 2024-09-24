@@ -64,7 +64,7 @@ sentry_sdk.init(
 )
 
 spam_detector = SpamWordsSearcher("resources/trigger_words.yaml")
-SPAM_MIN_WEIGHT = 100
+SPAM_MIN_WEIGHT = 1000
 
 text_message_handler = TextMessageHandler(config_path="resources/options.yaml")
 

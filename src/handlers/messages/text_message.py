@@ -5,7 +5,7 @@ import re
 import yaml
 from telegram import Message
 
-from src.handlers.messages.stuff.aux import get_text
+from .stuff.aux import get_text
 from .models import ResponseType, SimpleResponse
 from .stuff import hn_top
 
