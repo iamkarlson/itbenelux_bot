@@ -1,15 +1,25 @@
 words:
-- word: заработок
-  weight: 300
-- word: предложение
-  weight: 200
-- word: работа
-  weight: 100
-- word: вакансия
-  weight: 100
-- word: пacивный
-  weight: 50
-- word: доход
-  weight: 100
-- word: крипта
-  weight: 500
+  - word: крипта
+    weight: 500
+  - word: биткоин
+    weight: 500
+  - word: инвестиции
+    weight: 500
+  - word: предложение
+    weight: 400
+  - word: заработок
+    weight: 300
+  - word: работа
+    weight: 100
+  - word: вакансия
+    weight: 100
+  - word: доход
+    weight: 100
+  - word: рынок
+    weight: 100
+  - word: деньги
+    weight: 100
+  - word: набирать
+    weight: 50
+  - word: пacивный
+    weight: 50
