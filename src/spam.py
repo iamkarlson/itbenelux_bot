@@ -5,6 +5,9 @@ import yaml
 
 from dataclasses import dataclass
 
+from telegram import Message
+
+
 @dataclass
 class SpamWord:
     word: str
@@ -47,7 +50,33 @@ class SpamWordsSearcher:
                 found_words.append(spam_word)
         return found_words
 
-
-    def check_word(self, message: str, spam_word: str, threshold: int = 80) -> bool:
+    def check_word(self, message: str, spam_word: str, threshold: int = 60) -> bool:
         similarity = fuzz.partial_ratio(spam_word, message)
         return similarity >= threshold
+
+class SpamStructureSearcher:
+    """
+    Class to identify suspicious formatting options that spammers typically use
+    Overall, just any formatting is suspicious so we can simply count it
+    """
+
+    def search(self, message: Message) -> int:
+        entities = message.entities or []
+
+        def map_entity_type(entity):
+            match entity.type:
+                case 'bold':
+                    return 100
+                case 'italic':
+                    return 100
+                case 'underline':
+                    return 100
+                case 'mention':
+                    return 200
+                case 'custom_emoji':
+                    return 50
+                case _:
+                    return 0
+
+        return sum(map(map_entity_type, entities))
+

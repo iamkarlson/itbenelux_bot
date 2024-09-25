@@ -8,7 +8,7 @@ from unsync import unsync
 
 from .config import invite_handler, authorized_chats
 from .handlers.messages.stuff.aux import get_text
-from .spam import SpamWordsSearcher
+from .spam import SpamWordsSearcher, SpamStructureSearcher
 
 import sentry_sdk
 from sentry_sdk.integrations.gcp import GcpIntegration
@@ -63,7 +63,9 @@ sentry_sdk.init(
     profiles_sample_rate=1.0,
 )
 
-spam_detector = SpamWordsSearcher("resources/trigger_words.yaml")
+spam_words_detector = SpamWordsSearcher("resources/trigger_words.yaml")
+spam_structure_detector = SpamStructureSearcher()
+
 SPAM_MIN_WEIGHT = 1000
 
 text_message_handler = TextMessageHandler(config_path="resources/options.yaml")
@@ -165,7 +167,7 @@ def auth_check(message: Message):
 
 
 
-def calculate_spam_words_weights(message):
+def calculate_spam_words_weights(message: Message):
     """
     Function extract trigger words from the message and returns accumulative spam weights
 
@@ -174,7 +176,7 @@ def calculate_spam_words_weights(message):
     @return:
     """
     text = get_text(message)
-    found_words = spam_detector.search(text)
+    found_words = spam_words_detector.search(text)
 
     # Calculate the total weight of found spam words
     total_weight = sum(spam_word.weight for spam_word in found_words)
@@ -183,8 +185,9 @@ def calculate_spam_words_weights(message):
         logger.warning(f"There are a few spam words found: {[spam_word.word for spam_word in found_words]}")
 
     return total_weight
-def spam_check(message):
+def spam_check(message: Message):
     weights = calculate_spam_words_weights(message)
+    weights += spam_structure_detector.search(message)
     #weights += calculate_user_weigths(message)
     if weights >= SPAM_MIN_WEIGHT:
         return True
