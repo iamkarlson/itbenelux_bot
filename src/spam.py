@@ -1,12 +1,15 @@
 from typing import List
 
-from fuzzywuzzy import fuzz
+from jellyfish import jaro_similarity
 import yaml
 
 from dataclasses import dataclass
 
 from telegram import Message
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 @dataclass
 class SpamWord:
@@ -43,16 +46,16 @@ class SpamWordsSearcher:
             data = yaml.safe_load(file)
             return [SpamWord(word=item['word'], weight=item['weight']) for item in data['words']]
 
-    def search(self, message: str) -> List[SpamWord]:
+    def search(self, message: str, threshold: float = 0.85) -> List[SpamWord]:
         found_words = []
-        for spam_word in self.words:
-            if self.check_word(message, spam_word.word):
-                found_words.append(spam_word)
+        message_words = message.split()
+        for word in message_words:
+            for spam_word in self.words:
+                similarity = jaro_similarity(word, spam_word.word)
+                if similarity >= threshold:
+                    logger.debug(f"Found spam word: {spam_word.word} with similarity: {similarity}")
+                    found_words.append(spam_word)
         return found_words
-
-    def check_word(self, message: str, spam_word: str, threshold: int = 60) -> bool:
-        similarity = fuzz.partial_ratio(spam_word, message)
-        return similarity >= threshold
 
 class SpamStructureSearcher:
     """

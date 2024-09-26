@@ -34,9 +34,19 @@ class TestSpamWordsSearcher(unittest.TestCase):
         message = "This is a test message with заработок and предложение."
         found_words = self.searcher.search(message)
         self.assertIsInstance(found_words, list)
-        self.assertGreater(len(found_words), 0)
-        self.assertTrue(any(word.word == "заработок" for word in found_words))
+        self.assertEqual(2, len(found_words))
+        first_word = any(word.word == "зaрaботок" for word in found_words)
+
+
+        self.assertTrue(first_word, "Word 'заработок' not found in the list")
         self.assertTrue(any(word.word == "предложение" for word in found_words))
+
+    def test_search_false_alarm(self):
+        update =  {'message_id': 627965, 'from': {'id': 449647384, 'is_bot': False, 'first_name': 'Tim', 'username': 'zeehond'}, 'chat': {'id': -1001235860760, 'title': 'it talks Paesi Bassi, Belgio, Lussemburgo - buoni espatriati', 'username': 'ITBenelux', 'type': 'supergroup'}, 'date': 1727358993, 'text': 'у меня тоже, причём идея его поставить пришла именно из-за машинки )\n\nну Rocket в инструкции пишет что не надо декальцинировать\nставьте ontharder и молитесь'}
+        message = Message.de_json(update, None)
+        found_words = self.searcher.search(message.text)
+        self.assertIsInstance(found_words, list)
+        self.assertEqual(len(found_words), 0)
 
 
 class TestSpamStructureSearcher(unittest.TestCase):
@@ -48,7 +58,7 @@ class TestSpamStructureSearcher(unittest.TestCase):
         message = Message(message_id=1, date=datetime.now(), chat=Chat(id=1, type="test"),
                           text="This is a test message.")
         entities = self.searcher.search(message)
-        self.assertEqual(entities, 0)
+        self.assertEqual(0, entities)
 
     def test_search_a_lot_of_entities(self):
         update = {'message_id': 363, 'from': {'id': 107262564, 'is_bot': False,
@@ -81,7 +91,15 @@ class TestSpamStructureSearcher(unittest.TestCase):
         weight = self.searcher.search(message)
         # 7 emojis, 4 underlines, 2 italics, 1 mention
         # 10*7 + 50*4 + 50*2 + 100*1
-        self.assertEqual(weight, 1350)
+        self.assertEqual(1350, weight)
+
+    def test_search_false_alarm(self):
+        update =  {'message_id': 627965, 'from': {'id': 449647384, 'is_bot': False, 'first_name': 'Tim', 'username': 'zeehond'}, 'chat': {'id': -1001235860760, 'title': 'it talks Paesi Bassi, Belgio, Lussemburgo - buoni espatriati', 'username': 'ITBenelux', 'type': 'supergroup'}, 'date': 1727358993, 'text': 'у меня тоже, причём идея его поставить пришла именно из-за машинки )\n\nну Rocket в инструкции пишет что не надо декальцинировать\nставьте ontharder и молитесь'}
+        message = Message.de_json(update, None)
+        weight = self.searcher.search(message)
+        # 7 emojis, 4 underlines, 2 italics, 1 mention
+        # 10*7 + 50*4 + 50*2 + 100*1
+        self.assertEqual(0, weight)
 
 
 if __name__ == '__main__':
