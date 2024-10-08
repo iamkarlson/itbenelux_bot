@@ -38,7 +38,7 @@
   ratio: 100
 
 - regexp: "да[.!\\)]?$"
-  answer: "фрибэсда"
+  answer: "gnu/фрибэсда"
   ratio: 50
 
 - regexp: "нет[.!\\)]?$"
